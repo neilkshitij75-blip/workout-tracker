@@ -540,80 +540,86 @@ const KCAL_TARGET=2800;
 const PROTEIN_TARGET=160;
 
 const MEAL_PLAN=[
-  {day:"Monday",theme:"High Protein Start",meals:[
-    {type:"Breakfast",name:"Scrambled Eggs & Oats",kcal:520,protein:38,time:"10 min",ingredients:["4 eggs","80g oats","200ml milk","banana","handful spinach"],steps:["Cook oats with milk 3 min microwave","Scramble eggs in pan 3 min","Serve with sliced banana"]},
-    {type:"Lunch",name:"Chicken Rice Bowl",kcal:650,protein:48,time:"15 min",ingredients:["200g chicken breast","150g cooked rice","frozen mixed veg","soy sauce","garlic powder"],steps:["Season chicken with garlic powder","Pan-fry 6 min each side","Microwave veg 3 min","Serve over rice with soy sauce"]},
-    {type:"Snack",name:"Greek Yogurt & Nuts",kcal:280,protein:20,time:"0 min",ingredients:["200g Greek yogurt (0%)","30g mixed nuts","drizzle honey"],steps:["Combine in bowl — done"]},
-    {type:"Dinner",name:"Nasi Goreng (Indonesian Fried Rice)",kcal:680,protein:36,time:"20 min",ingredients:["200g cooked rice (day-old)","2 eggs","100g chicken strips","2 tbsp kecap manis (sweet soy)","1 tsp sambal","spring onion","garlic"],steps:["Fry garlic in oil 1 min","Add chicken, cook 4 min","Push to side, scramble eggs","Add rice, kecap manis, sambal","Toss everything 3 min, top with spring onion"]},
+  {day:"Sunday",prep:true,theme:"Batch Prep Day",meals:[
+    {type:"Breakfast",name:"Big Smoothie Bowl",kcal:490,protein:30,time:"5 min",prepNote:null,ingredients:["1 scoop Jumbo Sport Whey","1 banaan","200ml Jumbo Halfvolle Melk","150g Jumbo Diepvries Bosvruchten","40g Jumbo Granola Naturel","1 el Calve Pindakaas"],steps:["Blend protein + banaan + bessen + melk tot dik","Schep in kom","Beleggen met granola en pindakaas"]},
+    {type:"Lunch",name:"Rajma — Indiase Kidneybonencurry",kcal:600,protein:28,time:"25 min",prepNote:"Maak dubbele portie — houdbaar 3 dagen",ingredients:["2 blikken Jumbo Kidneybonen","1 ui","3 teentjes knoflook","1 blik Jumbo Tomatenblokjes","1 tl komijn","1 tl garam masala","1 tl koriander","150g Jumbo Basmatirijst"],steps:["Bak ui + knoflook + kruiden in olie 3 min","Voeg tomaten toe, kook 5 min","Voeg uitgelekte bonen toe, sudder 12 min","Kook extra rijst in aparte pan","Verdeel in 2 bakjes voor maan- en dinsdaglunch"]},
+    {type:"Snack",name:"Hardgekookte Eieren + Rijstwafels",kcal:220,protein:18,time:"0 min",prepNote:"Kook 9 eieren voor de hele week",ingredients:["3 Jumbo Scharrelieren (voorgekookt)","4 Jumbo Rijstwafels Naturel","zout en peper"],steps:["Kook zondag 9 eieren in een keer","Bewaar in koelkast — pak er 3 per keer"]},
+    {type:"Dinner",name:"Nasi Goreng",kcal:680,protein:36,time:"20 min",prepNote:"Gebruik overgebleven rijst van lunch-prep",ingredients:["200g oude gekookte rijst","2 Jumbo Scharrelieren","100g Jumbo Kipfilet reepjes","2 el Conimex Ketjap Manis","1 tl Conimex Sambal Oelek","2 lente-uitjes","2 teentjes knoflook","1 el Jumbo Zonnebloemolie"],steps:["Bak knoflook in olie 1 min","Voeg kipfilet toe, bak 4 min","Schuif opzij en roer eieren erdoor","Voeg rijst + ketjap manis + sambal toe","Alles 3 min roerbakken, garneer met lente-ui"]},
   ]},
-  {day:"Tuesday",theme:"Pull Day Fuel",meals:[
-    {type:"Breakfast",name:"Protein Overnight Oats",kcal:490,protein:35,time:"5 min prep",ingredients:["80g oats","1 scoop protein powder","200ml milk","frozen berries","chia seeds 1 tbsp"],steps:["Mix oats, protein, milk, chia in jar","Refrigerate overnight","Top with berries in morning"]},
-    {type:"Lunch",name:"Tuna Pasta",kcal:620,protein:45,time:"12 min",ingredients:["150g pasta","2 cans tuna in water","1 tbsp olive oil","lemon juice","black pepper","frozen peas"],steps:["Boil pasta 10 min","Drain, mix with tuna, peas, oil, lemon"]},
-    {type:"Snack",name:"Cottage Cheese & Rice Cakes",kcal:220,protein:22,time:"0 min",ingredients:["150g cottage cheese","4 rice cakes","cucumber slices"],steps:["Spread cottage cheese on rice cakes"]},
-    {type:"Dinner",name:"Dal Tadka (Indian Red Lentils)",kcal:580,protein:32,time:"25 min",ingredients:["200g red lentils","1 onion","2 garlic cloves","1 tsp cumin","1 tsp turmeric","1 tsp garam masala","canned tomatoes","rice 150g"],steps:["Boil lentils 15 min until soft","Fry onion+garlic+spices 3 min","Add tomatoes, cook 5 min","Combine with lentils, serve over rice"]},
+  {day:"Monday",prep:false,theme:"Grab & Go Day",meals:[
+    {type:"Breakfast",name:"Overnight Oats Pot",kcal:490,protein:35,time:"0 min — zondag klaargemaakt",prepNote:"Pak pot uit de koelkast",ingredients:["80g Jumbo Havermout Fijn","1 scoop whey protein","200ml Jumbo Halfvolle Melk","1 el Jumbo Chiazaad","150g ontdooide bosvruchten"],steps:["Zondag avond klaargezet","Pak pot, voeg bessen toe — klaar"]},
+    {type:"Lunch",name:"Rajma Kom (van zondag)",kcal:600,protein:28,time:"3 min opwarmen",prepNote:"Pak bakje uit de koelkast",ingredients:["Geportioneerde Rajma curry","Geportioneerde basmatirijst","handje spinazie"],steps:["Curry + rijst 3 min in magnetron","Spinazie ernaast — gedaan"]},
+    {type:"Snack",name:"Griekse Yoghurt + Noten",kcal:280,protein:20,time:"0 min",prepNote:null,ingredients:["200g Jumbo Griekse Yoghurt 0%","30g Jumbo Gemengde Noten","scheutje Jumbo Honing"],steps:["Combineer in kom — klaar"]},
+    {type:"Dinner",name:"Ayam Kecap — Indonesische Sojakip",kcal:640,protein:44,time:"20 min",prepNote:null,ingredients:["300g Jumbo Kipfilet","3 el Conimex Ketjap Manis","1 el Conimex Sojasaus","2 teentjes knoflook","1 tl gemberpoeder","150g Jumbo Basmatirijst (opgewarmd)"],steps:["Meng ketjap + soja + knoflook + gember","Bak kip 6 min per kant en bestrijk met saus","Snijd in plakken, serveer over opgewarmde rijst"]},
   ]},
-  {day:"Wednesday",theme:"Active Recovery",meals:[
-    {type:"Breakfast",name:"Egg & Veggie Wrap",kcal:480,protein:32,time:"10 min",ingredients:["3 eggs","2 whole wheat tortillas","bell pepper","spinach","50g feta cheese","hot sauce"],steps:["Scramble eggs with pepper & spinach","Wrap in tortilla with feta and hot sauce"]},
-    {type:"Lunch",name:"Chicken & Sweet Potato",kcal:640,protein:46,time:"20 min",ingredients:["200g chicken thighs","1 large sweet potato","broccoli","olive oil","paprika","garlic"],steps:["Cube sweet potato, roast 20 min at 200°C","Pan-fry seasoned chicken 8 min","Steam broccoli 5 min"]},
-    {type:"Snack",name:"Banana & Peanut Butter",kcal:290,protein:9,time:"0 min",ingredients:["2 bananas","2 tbsp peanut butter"],steps:["Slice banana, dip in peanut butter"]},
-    {type:"Dinner",name:"Ayam Kecap (Indonesian Soy Chicken)",kcal:620,protein:44,time:"20 min",ingredients:["300g chicken thighs","3 tbsp kecap manis","1 tbsp soy sauce","2 garlic cloves","1 tsp ginger","rice 150g"],steps:["Mix kecap manis, soy, garlic, ginger","Marinate chicken 5 min","Pan-fry 6 min each side basting with sauce","Serve with rice"]},
+  {day:"Tuesday",prep:false,theme:"Pull Day Fuel",meals:[
+    {type:"Breakfast",name:"Overnight Oats Pot #2",kcal:490,protein:35,time:"0 min — zondag klaargemaakt",prepNote:"Pak pot uit de koelkast",ingredients:["80g Jumbo Havermout Fijn","1 scoop whey protein","200ml Jumbo Halfvolle Melk","1 el Jumbo Chiazaad","1 gesneden banaan"],steps:["Pak pot, voeg banaan toe — klaar"]},
+    {type:"Lunch",name:"Rajma Kom (van zondag)",kcal:600,protein:28,time:"3 min opwarmen",prepNote:"Laatste bakje van zondag",ingredients:["Geportioneerde Rajma curry","Geportioneerde basmatirijst"],steps:["3 min magnetron — klaar"]},
+    {type:"Snack",name:"Huttenkase + Rijstwafels",kcal:220,protein:22,time:"0 min",prepNote:null,ingredients:["150g Jumbo Huttenkase","4 Jumbo Rijstwafels Naturel","komkommerschijfjes"],steps:["Smeer huttenkase op rijstwafels","Komkommer erbij"]},
+    {type:"Dinner",name:"Dal Tadka — Indiase Rode Linzencurry",kcal:580,protein:32,time:"25 min",prepNote:"Maak dubbele portie — voor donderdag",ingredients:["200g Jumbo Rode Linzen","1 ui","2 teentjes knoflook","1 tl komijn","1 tl kurkuma","1 tl garam masala","1 blik Jumbo Tomatenblokjes","150g Jumbo Basmatirijst"],steps:["Kook linzen 15 min tot zacht","Bak ui + knoflook + kruiden in olie 3 min","Voeg tomaten toe, kook 5 min","Combineer met linzen","Maak dubbele portie — bewaar extra voor donderdag"]},
   ]},
-  {day:"Thursday",theme:"Legs Day Load",meals:[
-    {type:"Breakfast",name:"Oats, Eggs & Fruit",kcal:530,protein:36,time:"10 min",ingredients:["80g oats","3 boiled eggs","apple","200ml orange juice"],steps:["Boil eggs 7 min","Cook oats 3 min microwave","Serve with fruit and juice"]},
-    {type:"Lunch",name:"Beef & Rice Meal Prep",kcal:700,protein:50,time:"15 min",ingredients:["200g lean ground beef","150g cooked rice","canned corn","mixed herbs","Worcestershire sauce"],steps:["Brown beef in pan 6 min","Add corn, herbs, Worcestershire","Serve over rice"]},
-    {type:"Snack",name:"Hard Boiled Eggs & Crackers",kcal:260,protein:18,time:"0 min",ingredients:["3 hard boiled eggs","wholegrain crackers","salt & pepper"],steps:["Pre-boil eggs in batch — grab and go"]},
-    {type:"Dinner",name:"Chicken Tikka Masala (Simple)",kcal:660,protein:46,time:"25 min",ingredients:["300g chicken breast cubed","1 can coconut milk","2 tbsp tikka paste (jar)","1 onion","rice 150g"],steps:["Fry onion 3 min","Add tikka paste, cook 1 min","Add chicken, cook 5 min","Pour in coconut milk, simmer 12 min","Serve with rice"]},
+  {day:"Wednesday",prep:true,theme:"Batch Prep Day",meals:[
+    {type:"Breakfast",name:"Roerei + Volkoren Toast",kcal:480,protein:32,time:"8 min",prepNote:null,ingredients:["4 Jumbo Scharrelieren","2 sneetjes Jumbo Volkoren Brood","handje spinazie","1 el Jumbo Roomboter","zout en peper"],steps:["Smelt boter in pan","Voeg spinazie 1 min toe, dan eieren","Langzaam roeren op laag vuur 3 min","Serveer op toast"]},
+    {type:"Lunch",name:"Tonijnpasta",kcal:620,protein:45,time:"12 min",prepNote:null,ingredients:["150g Jumbo Spaghetti","2 blikken Jongen Tonijn in Water","1 el Jumbo Olijfolie","sap van halve citroen","zwarte peper","handje erwten"],steps:["Kook pasta 10 min","Afgieten, mix met tonijn + erwten + olie + citroen","Peper erover — klaar"]},
+    {type:"Snack",name:"Banaan + Pindakaas",kcal:290,protein:9,time:"0 min",prepNote:null,ingredients:["2 bananen","2 el Calve Pindakaas Naturel"],steps:["Snijd banaan, dippen — klaar"]},
+    {type:"Dinner",name:"Batch Prep: Kip + Rijst + Groenten",kcal:680,protein:50,time:"45 min — prepsessie",prepNote:"Dit IS de woensdag-prep — levert 4 bakjes voor do + vrij",ingredients:["600g Jumbo Kipfilet","300g Jumbo Basmatirijst (droog)","1 krop broccoli","2 paprika's","2 el Conimex Sojasaus","1 el Jumbo Sesamolie","knoflookpoeder","paprikapoeder"],steps:["Bestrooi kip met knoflookpoeder + paprikapoeder","Bak in porties 6 min per kant — zet apart","Stoom broccoli + paprika in pan met deksel + scheutje water 5 min","Kook rijst in grote pan","Snijd kip, verdeel in 4 bakjes met rijst + groenten","Bedruppel met soja + sesamolie","Koel af — donderdag en vrijdag lunch klaar"]},
   ]},
-  {day:"Friday",theme:"Push Day Power",meals:[
-    {type:"Breakfast",name:"Protein Pancakes",kcal:510,protein:38,time:"15 min",ingredients:["2 eggs","1 scoop protein powder","80g oats blended","200ml milk","banana","baking powder pinch"],steps:["Blend all ingredients","Cook small pancakes in pan 2 min each side","Top with banana slices"]},
-    {type:"Lunch",name:"Salmon & Potato",kcal:650,protein:44,time:"15 min",ingredients:["2 salmon fillets (canned or fresh)","250g baby potatoes","green beans","lemon","olive oil","dill"],steps:["Boil potatoes 12 min","Steam green beans 4 min","Pan-fry salmon 4 min each side","Season with lemon and dill"]},
-    {type:"Snack",name:"Whey Shake & Oat Bar",kcal:300,protein:28,time:"2 min",ingredients:["1 scoop whey protein","300ml milk","1 oat bar (store-bought)"],steps:["Shake protein with milk — done"]},
-    {type:"Dinner",name:"Spaghetti Bolognese",kcal:720,protein:48,time:"25 min",ingredients:["200g lean ground beef","150g spaghetti","1 jar tomato passata","1 onion","garlic","Italian herbs","parmesan"],steps:["Fry onion+garlic 3 min","Brown beef 5 min","Add passata and herbs, simmer 15 min","Serve over pasta with parmesan"]},
+  {day:"Thursday",prep:false,theme:"Legs Day Load",meals:[
+    {type:"Breakfast",name:"Overnight Oats Pot #3",kcal:490,protein:35,time:"0 min — woensdag klaargemaakt",prepNote:"Pak pot uit de koelkast",ingredients:["80g Jumbo Havermout Fijn","1 scoop whey protein","200ml Jumbo Halfvolle Melk","1 el Jumbo Chiazaad","handje Jumbo Diepvries Bosvruchten"],steps:["Pak pot — klaar"]},
+    {type:"Lunch",name:"Batch Kipbakje (van woensdag)",kcal:680,protein:50,time:"3 min opwarmen",prepNote:"Pak bakje uit de koelkast",ingredients:["Geportioneerde kip + rijst + groenten","extra sojasaus naar smaak"],steps:["3 min magnetron","Extra sojasaus naar smaak"]},
+    {type:"Snack",name:"Hardgekookte Eieren + Appel",kcal:220,protein:16,time:"0 min",prepNote:"Van zondag voorgekookt",ingredients:["3 voorgekookte Jumbo Scharrelieren","1 appel"],steps:["Pakken en gaan"]},
+    {type:"Dinner",name:"Dal Tadka (restje van dinsdag)",kcal:580,protein:32,time:"3 min opwarmen",prepNote:"Overgebleven van dinsdag",ingredients:["Geportioneerde Dal Tadka","Geportioneerde basmatirijst"],steps:["3 min magnetron — een van de makkelijkste avonden van de week"]},
   ]},
-  {day:"Saturday",theme:"Upper Day + Refuel",meals:[
-    {type:"Breakfast",name:"Full Egg Breakfast",kcal:560,protein:40,time:"15 min",ingredients:["4 eggs","2 wholegrain toast","2 rashers turkey bacon","cherry tomatoes","mushrooms"],steps:["Grill turkey bacon 5 min","Fry eggs and mushrooms","Toast bread","Plate everything together"]},
-    {type:"Lunch",name:"Nasi Kuning Style Rice Bowl (Indonesian)",kcal:670,protein:38,time:"20 min",ingredients:["200g rice","200ml coconut milk","1 tsp turmeric","2 boiled eggs","100g tempeh","cucumber","sambal (jar)"],steps:["Cook rice in coconut milk + turmeric","Fry sliced tempeh in oil 3 min each side","Serve rice with eggs, tempeh, cucumber, sambal"]},
-    {type:"Snack",name:"Fruit & Cottage Cheese",kcal:250,protein:20,time:"0 min",ingredients:["200g cottage cheese","mixed fruit","honey"],steps:["Combine and eat"]},
-    {type:"Dinner",name:"Butter Chicken (Simple)",kcal:690,protein:48,time:"25 min",ingredients:["300g chicken thighs","1 can crushed tomatoes","3 tbsp butter chicken sauce (jar)","2 tbsp butter","cream 2 tbsp","rice 150g"],steps:["Fry chicken in butter 5 min","Add jar sauce and tomatoes","Simmer 15 min","Stir in cream, serve with rice"]},
+  {day:"Friday",prep:false,theme:"Push Day — Treat Night",meals:[
+    {type:"Breakfast",name:"Eiwitpannenkoekjes",kcal:510,protein:38,time:"15 min",prepNote:null,ingredients:["2 Jumbo Scharrelieren","1 scoop whey protein","80g Jumbo Havermout (geblend)","150ml Jumbo Halfvolle Melk","1 banaan","snufje bakpoeder"],steps:["Blend alle ingredienten tot beslag","Bak kleine pannenkoekjes 2 min per kant","Beleggen met gesneden banaan"]},
+    {type:"Lunch",name:"Batch Kipbakje (van woensdag)",kcal:680,protein:50,time:"3 min opwarmen",prepNote:"Laatste bakje van woensdag",ingredients:["Geportioneerde kip + rijst + groenten"],steps:["3 min magnetron — laatste van de batch"]},
+    {type:"Snack",name:"Whey Shake + Havereep",kcal:300,protein:28,time:"2 min",prepNote:null,ingredients:["1 scoop whey protein","300ml Jumbo Halfvolle Melk","1 Jumbo Havereep"],steps:["Shake protein met melk","Havereep erbij — klaar"]},
+    {type:"Dinner",name:"Pan-Geroosterde Entrecote + Zoete Aardappel",kcal:750,protein:52,time:"20 min",prepNote:"Treat meal — niet elke week",ingredients:["1 Jumbo Entrecote (~200g)","1 grote zoete aardappel","1 el Jumbo Roomboter","2 teentjes knoflook","zout en peper","handje Jumbo Kerstomaten"],steps:["Prik zoete aardappel in met vork","6 min magnetron op vol vermogen, halverwege draaien","Droog de steak goed af, royaal kruiden","Bak in gloeiend hete pan met boter 3 min per kant (medium)","Voeg knoflook toe in laatste minuut, bestrijk met boter","3 min laten rusten voor aansnijden","Halveer zoete aardappel, serveer met kerstomaten"]},
   ]},
-  {day:"Sunday",theme:"Rest Day & Prep",meals:[
-    {type:"Breakfast",name:"Big Smoothie Bowl",kcal:490,protein:30,time:"5 min",ingredients:["1 scoop protein powder","1 banana","200ml milk","frozen berries","granola 40g","nut butter 1 tbsp"],steps:["Blend protein, banana, berries, milk thick","Pour in bowl, top with granola and nut butter"]},
-    {type:"Lunch",name:"Meal Prep Chicken & Veg",kcal:620,protein:50,time:"30 min batch",ingredients:["500g chicken breast (batch)","rice 300g (batch)","broccoli","carrots","soy sauce","sesame oil"],steps:["Bake seasoned chicken at 200°C 22 min","Cook rice in bulk","Steam veg","Portion into 3-4 containers for the week"]},
-    {type:"Snack",name:"Boiled Eggs & Apple",kcal:220,protein:16,time:"0 min",ingredients:["3 boiled eggs","1 apple"],steps:["Pre-boiled from batch — grab and go"]},
-    {type:"Dinner",name:"Rajma (Indian Kidney Bean Curry)",kcal:600,protein:28,time:"25 min",ingredients:["2 cans kidney beans","1 onion","2 garlic cloves","canned tomatoes","1 tsp cumin","1 tsp coriander","1 tsp garam masala","rice 150g"],steps:["Fry onion+garlic+spices 3 min","Add tomatoes, cook 5 min","Add drained beans, simmer 12 min","Serve over rice — great for leftovers"]},
+  {day:"Saturday",prep:false,theme:"Upper Day + Refuel",meals:[
+    {type:"Breakfast",name:"Volledig Eiontbijt",kcal:560,protein:40,time:"15 min",prepNote:null,ingredients:["4 Jumbo Scharrelieren","2 sneetjes Jumbo Volkoren Brood","2 plakken Jumbo Kalkoenreepjes","handje Jumbo Kerstomaten","250g Jumbo Champignons","1 el Jumbo Roomboter"],steps:["Bak kalkoen in pan 3 min — zet apart","Bak champignons in dezelfde pan 4 min","Bak eieren naar wens","Toast brood","Alles op bord — stevig ontbijt"]},
+    {type:"Lunch",name:"Poke Bowl",kcal:670,protein:40,time:"10 min",prepNote:"Treat meal — rijst vooraf gekookt",ingredients:["150g gekookte rijst (opgewarmd)","1 blik Jongen Tonijn of 120g Jumbo Zalmfilet","halve avocado","komkommer gesneden","Jumbo Diepvries Edamame (3 min magnetron)","2 el Conimex Sojasaus","1 tl Jumbo Sesamolie","sesamzaad","sriracha optioneel"],steps:["Rijst 2 min opwarmen in magnetron","Edamame 3 min magnetron","Rijst in kom scheppen","Beleggen met vis, avocado, komkommer, edamame","Bedruppelen met soja + sesamolie, sesamzaad erover"]},
+    {type:"Snack",name:"Huttenkase + Fruit",kcal:250,protein:20,time:"0 min",prepNote:null,ingredients:["200g Jumbo Huttenkase","gemengd fruit","scheutje Jumbo Honing"],steps:["Combineer en eet"]},
+    {type:"Dinner",name:"Butter Chicken (Simpel)",kcal:690,protein:48,time:"25 min",prepNote:"Kook extra rijst voor zondagse nasi goreng",ingredients:["300g Jumbo Kipfilet","1 blik Jumbo Tomatenblokjes","3 el Pataks Butter Chicken Sauce","2 el Jumbo Roomboter","2 el Jumbo Kookroom","150g Jumbo Basmatirijst"],steps:["Bak kipblokjes in boter 5 min","Voeg saus + tomaten toe","Sudder 12 min","Roer room erdoor","Serveer over rijst — kook extra rijst voor zondag"]},
   ]},
 ];
 
-const MEAL_ICONS={Breakfast:"☀",Lunch:"☁",Snack:"⚡",Dinner:"🌙"};
-const MEAL_COLORS={Breakfast:ACCENT,Lunch:"#10B981",Snack:AMBER,Dinner:"#8B5CF6"};
+const MEAL_ICONS={Breakfast:"\u2600",Lunch:"\u2601",Snack:"\u26A1",Dinner:"\uD83C\uDF19"};
+const MEAL_COLORS={Breakfast:"#00BFFF",Lunch:"#10B981",Snack:"#F59E0B",Dinner:"#8B5CF6"};
 
 function MealScreen(){
-  const [selDay,setSelDay]=useState(0);
+  const [selDay,setSelDay]=useState(()=>{const d=new Date().getDay();return d===0?0:d;});
   const [expanded,setExpanded]=useState(null);
   const day=MEAL_PLAN[selDay];
   const dayTotals=day.meals.reduce((a,m)=>({kcal:a.kcal+m.kcal,protein:a.protein+m.protein}),{kcal:0,protein:0});
   const kcalPct=Math.min(100,Math.round((dayTotals.kcal/KCAL_TARGET)*100));
   const protPct=Math.min(100,Math.round((dayTotals.protein/PROTEIN_TARGET)*100));
-  const dayNames=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
+  const dayNames=["Zo","Ma","Di","Wo","Do","Vr","Za"];
   const todayDow=new Date().getDay();
-  const todayIdx=todayDow===0?6:todayDow-1;
-
   return h("div",{style:{paddingTop:14}},
     h("div",{style:{background:CARD,border:`1px solid ${BORDER}`,borderLeft:`3px solid ${ACCENT}`,borderRadius:10,padding:"12px 14px",marginBottom:12}},
-      h("div",{style:{fontFamily:FONT,fontSize:10,letterSpacing:2.5,color:MUTED,marginBottom:6}},"DAILY TARGETS"),
-      h("div",{style:{display:"flex",gap:16}},
-        h("div",null,h("div",{style:{fontFamily:FONT,fontSize:22,fontWeight:800,color:TEXT}},KCAL_TARGET,h("span",{style:{fontSize:12,color:MUTED}}," kcal")),h("div",{style:{fontSize:10,color:MUTED}},"calories/day")),
+      h("div",{style:{fontFamily:FONT,fontSize:10,letterSpacing:2.5,color:MUTED,marginBottom:6}},"DAGELIJKSE DOELEN"),
+      h("div",{style:{display:"flex",gap:16,flexWrap:"wrap"}},
+        h("div",null,h("div",{style:{fontFamily:FONT,fontSize:22,fontWeight:800,color:TEXT}},KCAL_TARGET,h("span",{style:{fontSize:12,color:MUTED}}," kcal")),h("div",{style:{fontSize:10,color:MUTED}},"calories/dag")),
         h("div",{style:{width:1,background:BORDER}}),
-        h("div",null,h("div",{style:{fontFamily:FONT,fontSize:22,fontWeight:800,color:ACCENT}},PROTEIN_TARGET,h("span",{style:{fontSize:12,color:MUTED}},"g")),h("div",{style:{fontSize:10,color:MUTED}},"protein/day")),
+        h("div",null,h("div",{style:{fontFamily:FONT,fontSize:22,fontWeight:800,color:ACCENT}},PROTEIN_TARGET,h("span",{style:{fontSize:12,color:MUTED}},"g")),h("div",{style:{fontSize:10,color:MUTED}},"eiwit/dag")),
         h("div",{style:{width:1,background:BORDER}}),
-        h("div",null,h("div",{style:{fontSize:10,color:MUTED,marginBottom:2}},"Budget"),h("div",{style:{fontFamily:FONT,fontSize:16,fontWeight:700,color:GREEN}},"€70",h("span",{style:{fontSize:10,color:MUTED}},"/week")))
+        h("div",null,h("div",{style:{fontSize:10,color:MUTED,marginBottom:2}},"Budget"),h("div",{style:{fontFamily:FONT,fontSize:16,fontWeight:700,color:GREEN}},"\u20ac70",h("span",{style:{fontSize:10,color:MUTED}},"/week")))
       )
     ),
     h("div",{style:{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:4,marginBottom:12}},
-      dayNames.map((d,i)=>h("button",{key:d,onClick:()=>{setSelDay(i);setExpanded(null);},style:{background:selDay===i?`${ACCENT}22`:CARD,border:`1px solid ${selDay===i?ACCENT+"55":BORDER}`,borderRadius:8,padding:"6px 2px",cursor:"pointer",textAlign:"center"}},
-        h("div",{style:{fontFamily:FONT,fontSize:9,color:selDay===i?ACCENT:i===todayIdx?AMBER:MUTED,letterSpacing:0.5}},(i===todayIdx?"●":"")+d.toUpperCase()),
-        h("div",{style:{fontFamily:FONT,fontSize:8,color:selDay===i?ACCENT:MUTED,marginTop:2,lineHeight:1}})
-      ))
+      dayNames.map((d,i)=>{
+        const plan=MEAL_PLAN[i];const isToday=i===todayDow;const isSel=selDay===i;
+        return h("button",{key:d,onClick:()=>{setSelDay(i);setExpanded(null);},style:{background:isSel?`${ACCENT}22`:CARD,border:`1px solid ${isSel?ACCENT+"55":BORDER}`,borderRadius:8,padding:"6px 2px",cursor:"pointer",textAlign:"center",position:"relative"}},
+          plan.prep&&h("div",{style:{position:"absolute",top:3,right:3,width:5,height:5,borderRadius:"50%",background:AMBER}}),
+          h("div",{style:{fontFamily:FONT,fontSize:9,color:isSel?ACCENT:isToday?AMBER:MUTED,letterSpacing:0.5}},d.toUpperCase()),
+          h("div",{style:{fontFamily:FONT,fontSize:7,color:isSel?ACCENT+"99":MUTED,marginTop:2}},plan.prep?"PREP":"")
+        );
+      })
+    ),
+    day.prep&&h("div",{style:{background:"rgba(245,158,11,0.08)",border:`1px solid rgba(245,158,11,0.3)`,borderRadius:8,padding:"8px 12px",marginBottom:10,display:"flex",alignItems:"center",gap:8}},
+      h("span",{style:{fontSize:12,color:AMBER,fontFamily:FONT,fontWeight:700,letterSpacing:0.5}},"PREP DAY"),
+      h("span",{style:{fontSize:11,color:MUTED}},"— batch cook vandaag om de hele week makkelijk te maken")
     ),
     h("div",{style:{background:CARD,border:`1px solid ${BORDER}`,borderRadius:10,padding:"12px 14px",marginBottom:12}},
       h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:10}},
@@ -623,165 +629,157 @@ function MealScreen(){
         ),
         h("div",{style:{textAlign:"right"}},
           h("div",{style:{fontFamily:FONT,fontSize:14,fontWeight:700,color:TEXT}},dayTotals.kcal+" kcal"),
-          h("div",{style:{fontSize:11,color:ACCENT}},dayTotals.protein+"g protein")
+          h("div",{style:{fontSize:11,color:ACCENT}},dayTotals.protein+"g eiwit")
         )
       ),
       h("div",{style:{marginBottom:6}},
-        h("div",{style:{display:"flex",justifyContent:"space-between",marginBottom:3}},
-          h("span",{style:{fontSize:10,color:MUTED,fontFamily:FONT}},"CALORIES"),
-          h("span",{style:{fontSize:10,color:kcalPct>=95?GREEN:MUTED,fontFamily:FONT}},kcalPct+"%")
-        ),
-        h("div",{style:{background:"#0D1117",borderRadius:4,height:6,overflow:"hidden"}},
-          h("div",{style:{width:kcalPct+"%",height:"100%",background:`linear-gradient(90deg,${ACCENT2},${ACCENT})`,borderRadius:4}})
-        )
+        h("div",{style:{display:"flex",justifyContent:"space-between",marginBottom:3}},h("span",{style:{fontSize:10,color:MUTED,fontFamily:FONT}},"CALORIES"),h("span",{style:{fontSize:10,color:kcalPct>=95?GREEN:MUTED,fontFamily:FONT}},kcalPct+"%")),
+        h("div",{style:{background:"#0D1117",borderRadius:4,height:6,overflow:"hidden"}},h("div",{style:{width:kcalPct+"%",height:"100%",background:`linear-gradient(90deg,${ACCENT2},${ACCENT})`,borderRadius:4}}))
       ),
       h("div",null,
-        h("div",{style:{display:"flex",justifyContent:"space-between",marginBottom:3}},
-          h("span",{style:{fontSize:10,color:MUTED,fontFamily:FONT}},"PROTEIN"),
-          h("span",{style:{fontSize:10,color:protPct>=95?GREEN:MUTED,fontFamily:FONT}},protPct+"%")
-        ),
-        h("div",{style:{background:"#0D1117",borderRadius:4,height:6,overflow:"hidden"}},
-          h("div",{style:{width:protPct+"%",height:"100%",background:ACCENT,borderRadius:4}})
-        )
+        h("div",{style:{display:"flex",justifyContent:"space-between",marginBottom:3}},h("span",{style:{fontSize:10,color:MUTED,fontFamily:FONT}},"EIWIT"),h("span",{style:{fontSize:10,color:protPct>=95?GREEN:MUTED,fontFamily:FONT}},protPct+"%")),
+        h("div",{style:{background:"#0D1117",borderRadius:4,height:6,overflow:"hidden"}},h("div",{style:{width:protPct+"%",height:"100%",background:ACCENT,borderRadius:4}}))
       )
     ),
     day.meals.map((meal,mi)=>{
-      const isOpen=expanded===mi;
-      const mc=MEAL_COLORS[meal.type]||ACCENT;
-      return h("div",{key:mi,style:{background:CARD,border:`1px solid ${isOpen?mc+"55":BORDER}`,borderLeft:`3px solid ${mc}`,borderRadius:10,marginBottom:8,overflow:"hidden",transition:"border-color 0.2s"}},
+      const isOpen=expanded===mi;const mc=MEAL_COLORS[meal.type]||ACCENT;
+      return h("div",{key:mi,style:{background:CARD,border:`1px solid ${isOpen?mc+"55":BORDER}`,borderLeft:`3px solid ${mc}`,borderRadius:10,marginBottom:8,overflow:"hidden"}},
         h("button",{onClick:()=>setExpanded(isOpen?null:mi),style:{width:"100%",background:"transparent",border:"none",cursor:"pointer",padding:"12px 14px",textAlign:"left"}},
           h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center"}},
-            h("div",{style:{display:"flex",alignItems:"center",gap:10}},
-              h("span",{style:{fontSize:16}}),
-              h("span",{style:{fontFamily:FONT,fontSize:11,letterSpacing:1.5,color:mc}},(MEAL_ICONS[meal.type]||"")+" "+meal.type.toUpperCase()),
-              h("div",null,
-                h("div",{style:{fontFamily:FONT,fontSize:15,fontWeight:800,color:TEXT,letterSpacing:0.3}},meal.name),
-                h("div",{style:{fontSize:11,color:MUTED,marginTop:2}},meal.time)
-              )
+            h("div",{style:{flex:1,minWidth:0}},
+              h("div",{style:{display:"flex",alignItems:"center",gap:6,marginBottom:3}},
+                h("span",{style:{fontFamily:FONT,fontSize:10,letterSpacing:1.5,color:mc}},meal.type.toUpperCase()),
+                meal.prepNote&&h("span",{style:{fontSize:9,background:"rgba(245,158,11,0.15)",color:AMBER,border:"1px solid rgba(245,158,11,0.3)",borderRadius:3,padding:"1px 5px",fontFamily:FONT,letterSpacing:0.5}},"PREP")
+              ),
+              h("div",{style:{fontFamily:FONT,fontSize:15,fontWeight:800,color:TEXT,letterSpacing:0.3}},meal.name),
+              h("div",{style:{fontSize:11,color:MUTED,marginTop:2}},meal.time)
             ),
-            h("div",{style:{textAlign:"right",flexShrink:0}},
+            h("div",{style:{textAlign:"right",flexShrink:0,marginLeft:10}},
               h("div",{style:{fontFamily:FONT,fontSize:14,fontWeight:700,color:TEXT}},meal.kcal+" kcal"),
-              h("div",{style:{fontSize:11,color:ACCENT}},meal.protein+"g pro"),
-              h("div",{style:{fontSize:10,color:MUTED,marginTop:2}},isOpen?"▲":"▼")
+              h("div",{style:{fontSize:11,color:ACCENT}},meal.protein+"g eiwit"),
+              h("div",{style:{fontSize:10,color:MUTED,marginTop:2}},isOpen?"\u25B2":"\u25BC")
             )
           )
         ),
         isOpen&&h("div",{style:{padding:"0 14px 14px",borderTop:`1px solid ${BORDER}`}},
+          meal.prepNote&&h("div",{style:{background:"rgba(245,158,11,0.08)",border:"1px solid rgba(245,158,11,0.25)",borderRadius:6,padding:"6px 10px",marginTop:10,marginBottom:10}},
+            h("span",{style:{fontSize:12,color:AMBER}},meal.prepNote)
+          ),
           h("div",{style:{marginTop:10,marginBottom:10}},
-            h("div",{style:{fontFamily:FONT,fontSize:10,letterSpacing:2,color:MUTED,marginBottom:6}},"INGREDIENTS"),
+            h("div",{style:{fontFamily:FONT,fontSize:10,letterSpacing:2,color:MUTED,marginBottom:6}},"INGREDIENTEN"),
             h("div",{style:{display:"flex",flexWrap:"wrap",gap:5}},
               meal.ingredients.map((ing,ii)=>h("span",{key:ii,style:{fontSize:11,background:`${mc}15`,color:mc,border:`1px solid ${mc}30`,borderRadius:4,padding:"2px 8px"}},ing))
             )
           ),
           h("div",null,
-            h("div",{style:{fontFamily:FONT,fontSize:10,letterSpacing:2,color:MUTED,marginBottom:6}},"STEPS"),
-            meal.steps.map((step,si)=>h("div",{key:si,style:{display:"flex",gap:8,marginBottom:5}},
+            h("div",{style:{fontFamily:FONT,fontSize:10,letterSpacing:2,color:MUTED,marginBottom:6}},"STAPPEN"),
+            meal.steps.map((step,si)=>h("div",{key:si,style:{display:"flex",gap:8,marginBottom:6}},
               h("div",{style:{fontFamily:FONT,fontSize:11,fontWeight:800,color:mc,flexShrink:0,marginTop:1}},si+1+"."),
-              h("div",{style:{fontSize:12,color:TEXT,lineHeight:1.5}},step)
+              h("div",{style:{fontSize:12,color:TEXT,lineHeight:1.6}},step)
             ))
           )
         )
       );
     }),
-      h(GroceryList,null)
+    h(GroceryList,null)
   );
 }
 
 const GROCERY={
   produce:{
-    label:"Produce & Frozen",icon:"Veg",color:"#10B981",
+    label:"Vers & Diepvries",color:"#10B981",
     items:[
-      {name:"Broccoli",qty:"2 heads",est:"\u20ac1.50"},
-      {name:"Spinach bag",qty:"200g",est:"\u20ac1.20"},
-      {name:"Bell peppers",qty:"3 mixed",est:"\u20ac1.80"},
-      {name:"Cherry tomatoes",qty:"250g punnet",est:"\u20ac1.50"},
-      {name:"Sweet potatoes",qty:"3 medium (~600g)",est:"\u20ac1.20"},
-      {name:"Baby potatoes",qty:"500g bag",est:"\u20ac1.20"},
-      {name:"Onions",qty:"1 bag (6-8)",est:"\u20ac1.00"},
-      {name:"Garlic",qty:"1 bulb",est:"\u20ac0.50"},
-      {name:"Spring onion",qty:"1 bunch",est:"\u20ac0.60"},
-      {name:"Cucumber",qty:"1",est:"\u20ac0.60"},
-      {name:"Mushrooms",qty:"250g",est:"\u20ac1.20"},
-      {name:"Bananas",qty:"6",est:"\u20ac1.20"},
-      {name:"Apples",qty:"4",est:"\u20ac1.20"},
-      {name:"Lemon",qty:"2",est:"\u20ac0.60"},
-      {name:"Frozen mixed veg",qty:"1kg bag",est:"\u20ac1.50"},
-      {name:"Frozen berries",qty:"500g bag",est:"\u20ac2.00"},
+      {name:"Jumbo Bananen",qty:"6 stuks",est:"\u20ac1.19"},
+      {name:"Jumbo Appels",qty:"4 stuks",est:"\u20ac1.29"},
+      {name:"Jumbo Kerstomaten",qty:"250g punnet",est:"\u20ac1.49"},
+      {name:"Jumbo Komkommer",qty:"1 stuk",est:"\u20ac0.59"},
+      {name:"Jumbo Paprika Mix",qty:"3 stuks",est:"\u20ac1.79"},
+      {name:"Jumbo Uien",qty:"1 zak (6 stuks)",est:"\u20ac0.99"},
+      {name:"Jumbo Knoflook",qty:"1 bol",est:"\u20ac0.49"},
+      {name:"Jumbo Broccoli",qty:"1 krop (~400g)",est:"\u20ac1.19"},
+      {name:"Jumbo Champignons",qty:"250g",est:"\u20ac1.29"},
+      {name:"Jumbo Lente-ui",qty:"1 bosje",est:"\u20ac0.59"},
+      {name:"Jumbo Zoete Aardappel",qty:"2 stuks (~500g)",est:"\u20ac1.49"},
+      {name:"Jumbo Avocado",qty:"1 stuk",est:"\u20ac0.99"},
+      {name:"Jumbo Citroen",qty:"2 stuks",est:"\u20ac0.59"},
+      {name:"Jumbo Diepvries Bosvruchten",qty:"500g zak",est:"\u20ac2.29"},
+      {name:"Jumbo Diepvries Edamame",qty:"400g zak",est:"\u20ac2.49"},
+      {name:"Jumbo Diepvries Groentenmix",qty:"1kg zak",est:"\u20ac1.49"},
     ]
   },
   dairy:{
-    label:"Dairy & Eggs",icon:"Egg",color:"#00BFFF",
+    label:"Zuivel & Eieren",color:"#00BFFF",
     items:[
-      {name:"Eggs (free range)",qty:"18-pack",est:"\u20ac3.50"},
-      {name:"Greek yogurt (0%)",qty:"500g tub",est:"\u20ac1.80"},
-      {name:"Cottage cheese",qty:"500g tub",est:"\u20ac1.80"},
-      {name:"Milk (semi-skimmed)",qty:"2L",est:"\u20ac1.60"},
-      {name:"Feta cheese",qty:"150g block",est:"\u20ac1.50"},
-      {name:"Parmesan",qty:"80g block",est:"\u20ac1.80"},
-      {name:"Butter",qty:"250g pack",est:"\u20ac2.00"},
-      {name:"Single cream",qty:"150ml",est:"\u20ac1.00"},
+      {name:"Jumbo Scharrelieren",qty:"18 stuks",est:"\u20ac4.49"},
+      {name:"Jumbo Griekse Yoghurt 0%",qty:"500g",est:"\u20ac1.89"},
+      {name:"Jumbo Huttenkase",qty:"500g",est:"\u20ac1.79"},
+      {name:"Jumbo Halfvolle Melk",qty:"2 liter",est:"\u20ac1.59"},
+      {name:"Jumbo Feta Kaas",qty:"150g blok",est:"\u20ac1.69"},
+      {name:"Jumbo Geraspte Parmigiano",qty:"60g zakje",est:"\u20ac1.49"},
+      {name:"Jumbo Roomboter",qty:"250g",est:"\u20ac2.29"},
+      {name:"Jumbo Kookroom",qty:"150ml",est:"\u20ac0.99"},
     ]
   },
   meat:{
-    label:"Meat & Fish",icon:"Meat",color:"#FF6B35",
+    label:"Vlees & Vis",color:"#FF6B35",
     items:[
-      {name:"Chicken breast",qty:"1kg pack",est:"\u20ac6.00"},
-      {name:"Chicken thighs (boneless)",qty:"500g",est:"\u20ac3.00"},
-      {name:"Lean ground beef",qty:"400g",est:"\u20ac3.50"},
-      {name:"Turkey bacon",qty:"200g pack",est:"\u20ac2.00"},
-      {name:"Tuna in water (canned)",qty:"4 x 160g cans",est:"\u20ac3.00"},
-      {name:"Salmon fillets",qty:"2 fillets (~300g)",est:"\u20ac4.00"},
-      {name:"Tempeh",qty:"250g block",est:"\u20ac2.50"},
+      {name:"Jumbo Kipfilet",qty:"1kg",est:"\u20ac6.99"},
+      {name:"Jumbo Kippendijen (zonder bot)",qty:"500g",est:"\u20ac3.49"},
+      {name:"Jumbo Entrecote",qty:"1 stuk (~200g)",est:"\u20ac5.99"},
+      {name:"Jumbo Kalkoenreepjes",qty:"200g",est:"\u20ac2.19"},
+      {name:"Jongen Tonijn in Water",qty:"4 blikjes (4x160g)",est:"\u20ac3.59"},
+      {name:"Jumbo Zalmfilet",qty:"2 stuks (~300g)",est:"\u20ac4.49"},
+      {name:"Jumbo Tempeh Naturel",qty:"250g",est:"\u20ac2.29"},
     ]
   },
   pantry:{
-    label:"Pantry & Dry Goods",icon:"Dry",color:"#F59E0B",
+    label:"Droogwaren & Voorraad",color:"#F59E0B",
     items:[
-      {name:"Rolled oats",qty:"1kg bag",est:"\u20ac1.50"},
-      {name:"Basmati rice",qty:"1kg bag",est:"\u20ac1.50"},
-      {name:"Spaghetti",qty:"500g",est:"\u20ac1.00"},
-      {name:"Wholegrain bread",qty:"1 loaf",est:"\u20ac1.80"},
-      {name:"Wholegrain tortillas",qty:"pack of 6",est:"\u20ac1.80"},
-      {name:"Rice cakes",qty:"1 pack",est:"\u20ac1.20"},
-      {name:"Granola",qty:"400g bag",est:"\u20ac2.50"},
-      {name:"Oat bars (store brand)",qty:"6-pack",est:"\u20ac2.00"},
-      {name:"Peanut butter",qty:"340g jar",est:"\u20ac2.50"},
-      {name:"Honey",qty:"250g jar",est:"\u20ac1.80"},
-      {name:"Mixed nuts",qty:"200g bag",est:"\u20ac3.00"},
-      {name:"Chia seeds",qty:"200g bag",est:"\u20ac2.00"},
-      {name:"Kecap manis",qty:"1 bottle",est:"\u20ac2.50"},
-      {name:"Sambal oelek",qty:"1 jar",est:"\u20ac2.00"},
-      {name:"Soy sauce",qty:"150ml bottle",est:"\u20ac1.20"},
-      {name:"Tikka masala paste",qty:"1 jar",est:"\u20ac2.00"},
-      {name:"Butter chicken sauce",qty:"1 jar",est:"\u20ac2.50"},
-      {name:"Coconut milk",qty:"2 x 400ml cans",est:"\u20ac2.00"},
-      {name:"Canned crushed tomatoes",qty:"4 x 400g cans",est:"\u20ac2.40"},
-      {name:"Kidney beans",qty:"2 x 400g cans",est:"\u20ac1.60"},
-      {name:"Red lentils",qty:"500g bag",est:"\u20ac1.50"},
-      {name:"Olive oil",qty:"500ml bottle",est:"\u20ac3.00"},
-      {name:"Sesame oil",qty:"150ml bottle",est:"\u20ac2.00"},
-      {name:"Worcestershire sauce",qty:"150ml bottle",est:"\u20ac1.50"},
-      {name:"Cumin (ground)",qty:"small jar",est:"\u20ac1.00"},
-      {name:"Turmeric",qty:"small jar",est:"\u20ac1.00"},
-      {name:"Garam masala",qty:"small jar",est:"\u20ac1.00"},
-      {name:"Smoked paprika",qty:"small jar",est:"\u20ac1.00"},
-      {name:"Italian herbs",qty:"small jar",est:"\u20ac1.00"},
-      {name:"Garlic powder",qty:"small jar",est:"\u20ac1.00"},
-      {name:"Baking powder",qty:"small tin",est:"\u20ac0.80"},
+      {name:"Jumbo Havermout Fijn",qty:"1kg",est:"\u20ac1.49"},
+      {name:"Jumbo Basmatirijst",qty:"1kg",est:"\u20ac1.69"},
+      {name:"Jumbo Spaghetti",qty:"500g",est:"\u20ac0.99"},
+      {name:"Jumbo Volkoren Brood",qty:"1 brood",est:"\u20ac1.89"},
+      {name:"Jumbo Volkoren Tortillas",qty:"8 stuks",est:"\u20ac1.89"},
+      {name:"Jumbo Rijstwafels Naturel",qty:"100g pak",est:"\u20ac1.19"},
+      {name:"Jumbo Granola Naturel",qty:"400g",est:"\u20ac2.49"},
+      {name:"Jumbo Havereep",qty:"6-pak",est:"\u20ac1.99"},
+      {name:"Calve Pindakaas Naturel",qty:"350g pot",est:"\u20ac2.39"},
+      {name:"Jumbo Honing",qty:"350g pot",est:"\u20ac1.99"},
+      {name:"Jumbo Gemengde Noten",qty:"200g",est:"\u20ac2.99"},
+      {name:"Jumbo Chiazaad",qty:"200g",est:"\u20ac1.99"},
+      {name:"Conimex Ketjap Manis",qty:"240ml fles",est:"\u20ac2.49"},
+      {name:"Conimex Sambal Oelek",qty:"200ml pot",est:"\u20ac1.99"},
+      {name:"Conimex Sojasaus",qty:"150ml fles",est:"\u20ac1.29"},
+      {name:"Pataks Butter Chicken Sauce",qty:"350g pot",est:"\u20ac2.79"},
+      {name:"Jumbo Kokosmelk",qty:"2 blikjes (2x400ml)",est:"\u20ac1.98"},
+      {name:"Jumbo Tomatenblokjes",qty:"4 blikjes (4x400g)",est:"\u20ac2.36"},
+      {name:"Jumbo Kidneybonen",qty:"2 blikjes (2x400g)",est:"\u20ac1.58"},
+      {name:"Jumbo Rode Linzen",qty:"500g zak",est:"\u20ac1.59"},
+      {name:"Jumbo Olijfolie",qty:"500ml fles",est:"\u20ac2.99"},
+      {name:"Jumbo Zonnebloemolie",qty:"500ml",est:"\u20ac1.49"},
+      {name:"Jumbo Sesamolie",qty:"150ml",est:"\u20ac2.19"},
+      {name:"Jumbo Sesamzaad",qty:"klein zakje",est:"\u20ac0.99"},
+      {name:"Jumbo Komijnpoeder",qty:"klein potje",est:"\u20ac0.99"},
+      {name:"Jumbo Kurkuma",qty:"klein potje",est:"\u20ac0.99"},
+      {name:"Jumbo Garam Masala",qty:"klein potje",est:"\u20ac0.99"},
+      {name:"Jumbo Gerookt Paprikapoeder",qty:"klein potje",est:"\u20ac0.99"},
+      {name:"Jumbo Italiaanse Kruiden",qty:"klein potje",est:"\u20ac0.99"},
+      {name:"Jumbo Knoflookpoeder",qty:"klein potje",est:"\u20ac0.99"},
+      {name:"Sriracha Saus",qty:"1 fles (optioneel)",est:"\u20ac1.99"},
+      {name:"Whey Protein",qty:"bestaande voorraad",est:"\u2014"},
+      {name:"Creatine",qty:"bestaande voorraad",est:"\u2014"},
     ]
   }
 };
 
 function GroceryList(){
-  const SKEY="trainmore_grocery_v1";
+  const SKEY="trainmore_grocery_v2";
   function loadChecked(){try{const r=localStorage.getItem(SKEY);return r?new Set(JSON.parse(r)):new Set();}catch(e){return new Set();}}
   const [checked,setChecked]=useState(()=>loadChecked());
   const [activeSection,setActiveSection]=useState("produce");
-
   function toggle(key){
     setChecked(prev=>{
-      const next=new Set(prev);
-      next.has(key)?next.delete(key):next.add(key);
+      const next=new Set(prev);next.has(key)?next.delete(key):next.add(key);
       try{localStorage.setItem(SKEY,JSON.stringify([...next]));}catch(e){}
       return next;
     });
@@ -794,48 +792,40 @@ function GroceryList(){
       return next;
     });
   }
-  function clearAll(){
-    setChecked(new Set());
-    try{localStorage.removeItem(SKEY);}catch(e){}
-  }
-
+  function clearAll(){setChecked(new Set());try{localStorage.removeItem(SKEY);}catch(e){}}
   const sections=Object.keys(GROCERY);
   const totalItems=sections.reduce((a,s)=>a+GROCERY[s].items.length,0);
   const totalChecked=[...checked].length;
   const pct=Math.round((totalChecked/totalItems)*100);
   const sec=GROCERY[activeSection];
-
+  const estTotal=sections.reduce((sum,s)=>sum+GROCERY[s].items.reduce((a,item)=>{const m=item.est.match(/[\d.]+/);return a+(m?parseFloat(m[0]):0);},0),0);
+  const SECTION_LABELS={produce:"VERS",dairy:"ZUIVEL",meat:"VLEES",pantry:"DROOG"};
   return h("div",{style:{marginTop:4,marginBottom:8}},
     h("div",{style:{background:CARD,border:`1px solid ${BORDER}`,borderLeft:`3px solid ${GREEN}`,borderRadius:10,padding:"12px 14px",marginBottom:10}},
       h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}},
         h("div",null,
-          h("div",{style:{fontFamily:FONT,fontSize:10,letterSpacing:2.5,color:MUTED}},"WEEKLY GROCERY LIST"),
-          h("div",{style:{fontFamily:FONT,fontSize:18,fontWeight:800,color:TEXT,marginTop:2}},
-            "\u20ac68-72",h("span",{style:{fontSize:11,color:MUTED,fontWeight:400}}," estimated")
-          )
+          h("div",{style:{fontFamily:FONT,fontSize:10,letterSpacing:2.5,color:MUTED}},"JUMBO BOODSCHAPPENLIJST"),
+          h("div",{style:{fontFamily:FONT,fontSize:18,fontWeight:800,color:TEXT,marginTop:2}},"\u20ac"+Math.floor(estTotal)+"\u2013"+(Math.floor(estTotal)+4),h("span",{style:{fontSize:11,color:MUTED,fontWeight:400}}," geschat"))
         ),
         h("div",{style:{textAlign:"right"}},
           h("div",{style:{fontFamily:FONT,fontSize:22,fontWeight:800,color:pct===100?GREEN:ACCENT}},totalChecked+"/"+totalItems),
-          h("div",{style:{fontSize:10,color:MUTED}},"items ticked")
+          h("div",{style:{fontSize:10,color:MUTED}},"aangevinkt")
         )
       ),
       h("div",{style:{background:"#0D1117",borderRadius:4,height:6,overflow:"hidden",marginBottom:6}},
         h("div",{style:{width:Math.max(0,pct)+"%",height:"100%",background:pct===100?GREEN:ACCENT,borderRadius:4,transition:"width 0.3s"}})
       ),
       pct===100
-        ?h("div",{style:{fontSize:11,color:GREEN,fontFamily:FONT,letterSpacing:1,textAlign:"center"}},"ALL DONE - YOU ARE READY TO PREP")
-        :pct>0&&h("button",{onClick:clearAll,style:{background:"transparent",border:"none",color:MUTED,fontSize:11,cursor:"pointer",padding:0,fontFamily:FONT,letterSpacing:1}},"CLEAR ALL")
+        ?h("div",{style:{fontSize:11,color:GREEN,fontFamily:FONT,letterSpacing:1,textAlign:"center"}},"KLAAR \u2014 JE KUNT GAAN PREPPEN!")
+        :pct>0&&h("button",{onClick:clearAll,style:{background:"transparent",border:"none",color:MUTED,fontSize:11,cursor:"pointer",padding:0,fontFamily:FONT,letterSpacing:1}},"ALLES WISSEN")
     ),
     h("div",{style:{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:6,marginBottom:10}},
       sections.map(s=>{
         const info=GROCERY[s];
         const secDone=info.items.filter((_,i)=>checked.has(s+i)).length;
-        const allDone=secDone===info.items.length;
-        const active=activeSection===s;
+        const allDone=secDone===info.items.length;const active=activeSection===s;
         return h("button",{key:s,onClick:()=>setActiveSection(s),style:{background:active?`${info.color}20`:CARD,border:`1px solid ${active?info.color+"66":BORDER}`,borderRadius:8,padding:"8px 4px",cursor:"pointer",textAlign:"center",transition:"all 0.15s"}},
-          h("div",{style:{fontFamily:FONT,fontSize:8,letterSpacing:1,color:active?info.color:MUTED,marginBottom:2}},
-            s==="produce"?"PRODUCE":s==="dairy"?"DAIRY":s==="meat"?"MEAT":"PANTRY"
-          ),
+          h("div",{style:{fontFamily:FONT,fontSize:8,letterSpacing:1,color:active?info.color:MUTED,marginBottom:2}},SECTION_LABELS[s]),
           h("div",{style:{fontFamily:FONT,fontSize:13,fontWeight:800,color:allDone?GREEN:active?info.color:MUTED}},secDone+"/"+info.items.length)
         );
       })
@@ -844,13 +834,12 @@ function GroceryList(){
       h("div",{style:{padding:"12px 14px 10px",borderBottom:`1px solid ${BORDER}`,display:"flex",justifyContent:"space-between",alignItems:"center"}},
         h("div",null,
           h("div",{style:{fontFamily:FONT,fontSize:14,fontWeight:800,letterSpacing:1,color:TEXT}},sec.label.toUpperCase()),
-          h("div",{style:{fontSize:11,color:MUTED,marginTop:2}},sec.items.filter((_,i)=>checked.has(activeSection+i)).length+" of "+sec.items.length+" ticked")
+          h("div",{style:{fontSize:11,color:MUTED,marginTop:2}},sec.items.filter((_,i)=>checked.has(activeSection+i)).length+" van "+sec.items.length+" aangevinkt")
         ),
-        h("button",{onClick:()=>clearSection(activeSection),style:{background:"transparent",border:`1px solid ${BORDER}`,color:MUTED,borderRadius:6,padding:"4px 10px",cursor:"pointer",fontFamily:FONT,fontSize:10,letterSpacing:1}},"CLEAR")
+        h("button",{onClick:()=>clearSection(activeSection),style:{background:"transparent",border:`1px solid ${BORDER}`,color:MUTED,borderRadius:6,padding:"4px 10px",cursor:"pointer",fontFamily:FONT,fontSize:10,letterSpacing:1}},"WISSEN")
       ),
       sec.items.map((item,i)=>{
-        const key=activeSection+i;
-        const done=checked.has(key);
+        const key=activeSection+i;const done=checked.has(key);
         return h("div",{key:i,onClick:()=>toggle(key),style:{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"11px 14px",borderBottom:i<sec.items.length-1?`1px solid ${BORDER}`:"none",cursor:"pointer",background:done?"rgba(34,197,94,0.04)":"transparent",transition:"background 0.15s"}},
           h("div",{style:{display:"flex",alignItems:"center",gap:10,flex:1,minWidth:0}},
             h("div",{style:{width:20,height:20,borderRadius:4,border:`2px solid ${done?GREEN:BORDER}`,background:done?GREEN:"transparent",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,transition:"all 0.15s"}},
@@ -867,6 +856,7 @@ function GroceryList(){
     )
   );
 }
+
 
 ReactDOM.render(React.createElement(App),document.getElementById("root"));
 </script>
