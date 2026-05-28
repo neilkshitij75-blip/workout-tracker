@@ -184,6 +184,9 @@ input { font-family: var(--font-body); }
 .complete-stat { flex: 1; background: var(--card2); border-radius: 10px; padding: 10px; }
 .complete-stat-val { font-family: var(--font-display); font-size: 22px; color: var(--accent); }
 .complete-stat-lbl { font-size: 10px; color: var(--muted); letter-spacing: 1px; margin-top: 2px; }
+
+
+
 </style>
 </head>
 <body>
@@ -233,6 +236,16 @@ input { font-family: var(--font-body); }
 <script>
 // ── DATA ────────────────────────────────────────────────────────────────────
 const SKEY = 'core_ab_v1';
+
+
+const DEMOS = {
+  deadbug:  { url: "https://www.youtube.com/shorts/Aoipu_fl3HA",   label: "Watch: Dead Bug" },
+  hollow:   { url: "https://www.youtube.com/shorts/KgkU7yAEW90",   label: "Watch: Hollow Body Hold" },
+  bicycle:  { url: "https://www.youtube.com/watch?v=9FGilxCbdz8",  label: "Watch: Bicycle Crunch" },
+  legrise:  { url: "https://www.youtube.com/shorts/fbGDQGHxvHk",   label: "Watch: Leg Raises" },
+  plank:    { url: "https://www.youtube.com/watch?v=ASdvN_XEl_c",  label: "Watch: Plank Hold" },
+  reversecrunch: { url: "https://www.youtube.com/shorts/JonqVgFNiqE", label: "Watch: Reverse Crunch" }
+};
 
 const EXERCISES = [
   {
@@ -331,9 +344,9 @@ const EXERCISES = [
     ]
   },
   {
-    id: 'crunch',
-    name: 'CRUNCH HOLD',
-    muscle: 'Upper Rectus Abdominis',
+    id: 'reversecrunch',
+    name: 'REVERSE CRUNCH',
+    muscle: 'Lower Abs · Rectus Abdominis',
     type: 'reps',
     sets: 3,
     reps: 15,
@@ -341,12 +354,12 @@ const EXERCISES = [
     per_side: false,
     difficulty: 'Foundation',
     diffColor: '#3B82F6',
-    why: 'Isolates the upper rectus abdominis with a full contraction. Better than a regular crunch because you pause at the top.',
+    why: 'Targets the lower abs — the hardest part of the six pack to develop and the area most visible at your stage. Safer than a regular crunch because your neck and upper back stay on the floor throughout.',
     cues: [
-      'Curl up until shoulder blades clear the floor',
-      'Hold the top position for 1 second — squeeze hard',
-      'Lower slowly — 2 seconds down',
-      'Hands crossed on chest or lightly behind ears — never pulling'
+      'Lie flat, arms by sides, knees bent at 90° raised in the air',
+      'Curl your hips off the floor by driving your knees toward your chest',
+      'The movement comes from your abs — not momentum or swinging',
+      'Lower slowly back to start — 2 seconds down, do not let feet touch the floor'
     ]
   }
 ];
@@ -863,6 +876,14 @@ function renderWorkout() {
         </div>
       </div>
       ${isExpanded ? `<div class="ex-body">
+        <a href="${DEMOS[ex.id].url}" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;background:#0D1117;border:1px solid #FF0000;border-radius:10px;padding:11px 14px;margin-bottom:10px;text-decoration:none;">
+          <span style="font-size:20px;flex-shrink:0">▶</span>
+          <div>
+            <div style="font-family:var(--font-display);font-size:13px;letter-spacing:1px;color:#FF4545">${DEMOS[ex.id].label}</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:2px">Opens YouTube — watch before your first set</div>
+          </div>
+          <span style="margin-left:auto;font-size:11px;color:var(--muted)">↗</span>
+        </a>
         <div class="tip-card" style="margin-bottom:10px">
           <div style="font-size:11px;color:var(--muted);margin-bottom:6px;font-family:var(--font-display);letter-spacing:1px">WHY THIS EXERCISE</div>
           <div style="font-size:12px;color:var(--muted2);line-height:1.5">${ex.why}</div>
