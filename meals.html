@@ -58,28 +58,210 @@ function getWeekNum(){
   return Math.max(0,Math.floor((new Date()-start)/(7*24*60*60*1000)));
 }
 
+// BATCH STRUCTURE:
+// SUNDAY (~55 min): Nasi Goreng x3 (Sun/Mon/Tue lunch) + Airfryer Honey Garlic Chicken x3 (Sun/Mon/Tue dinner)
+// WEDNESDAY (~30 min, weekday-simple): Airfryer Lemon Herb Chicken + Sweet Potato x3 (Wed/Thu/Fri lunch) + Beef Taco Bowl x3 (Wed/Thu/Fri dinner)
+// SATURDAY: Poke Bowl (lunch, fresh) + Pan-seared Steak + Airfryer Sweet Potato (dinner, treat)
+// BREAKFASTS: Option A = Greek Yogurt Power Bowl | Option B = Scrambled Eggs + Smoked Chicken + Fruit
+
 const MEAL_PLAN=[
   {day:"Sunday",prep:true,theme:"Batch Prep Day",meals:[
-    {type:"Breakfast",name:"Scrambled Eggs + Toast + Fruit",kcal:480,protein:30,time:"10 min",prepNote:null,
-     ingredients:["4 Jumbo Scharrelieren (free-range eggs)","2 sneetjes Jumbo Volkoren Brood (wholegrain bread)","1 el Jumbo Roomboter (butter)","1 banaan (banana)","handje Jumbo Diepvries Bosvruchten (frozen mixed berries, thawed)","salt and pepper"],
-     steps:["Melt butter in pan on low heat","Crack in eggs, stir slowly until just set — about 3 min","Toast bread","Serve eggs on toast with banana and berries on the side"]},
-    {type:"Lunch",name:"Nasi Goreng (from Sunday batch)",kcal:650,protein:38,time:"0 min — eat from batch",prepNote:"You just made this — serve straight from the pan",
+    {type:"Breakfast",name:"Scrambled Eggs + Smoked Chicken + Fruit",kcal:490,protein:38,time:"8 min",prepNote:null,
+     ingredients:[
+       "4 Jumbo Scharrelieren (free-range eggs)",
+       "100g Jumbo Gerookte Kipfilet (smoked chicken breast slices)",
+       "1 el Jumbo Roomboter (butter)",
+       "handje Jumbo Kerstomaten (cherry tomatoes)",
+       "1 banaan (banana)",
+       "salt, black pepper, chilli flakes"
+     ],
+     steps:[
+       "Melt butter in non-stick pan on low-medium heat",
+       "Crack eggs in, stir slowly with a spatula — pull from edges inward",
+       "Remove from heat while still slightly glossy — residual heat finishes them",
+       "Season with salt, black pepper and a pinch of chilli flakes",
+       "Plate with smoked chicken slices, cherry tomatoes and banana on the side"
+     ]},
+    {type:"Lunch",name:"Nasi Goreng (from Sunday batch)",kcal:660,protein:40,time:"0 min — eat from batch",prepNote:"Serve straight from the wok — best eaten fresh",
      ingredients:["Portioned Nasi Goreng (from batch cook below)"],
-     steps:["Serve one portion directly — no reheating needed","Store remaining 2 portions in fridge for Mon and Tue lunch"]},
-    {type:"Dinner",name:"Beef Taco Bowl (from Sunday batch)",kcal:680,protein:44,time:"0 min — eat from batch",prepNote:"You just made this — serve straight from the pan",
-     ingredients:["Portioned Beef Taco Bowl (from batch cook below)"],
-     steps:["Build your taco: spoon beef + beans into tortilla","Add salsa, grated cheese, squeeze of lime, fresh coriander","Store remaining 2 portions of beef mix in fridge for Mon and Tue dinner"]},
-    {type:"Batch Cook",name:"SUNDAY PREP — Nasi Goreng x3 + Beef Taco Bowl x3",kcal:0,protein:0,time:"60 min total",prepNote:"Do this after breakfast. Makes all lunches and dinners for Sun, Mon, Tue.",
+     steps:[
+       "Serve one portion directly — no reheating needed",
+       "Top with extra sambal if you want more heat",
+       "Store remaining 2 portions in airtight containers in fridge"
+     ]},
+    {type:"Dinner",name:"Honey Garlic Chicken (from Sunday batch)",kcal:680,protein:46,time:"0 min — eat from batch",prepNote:"Serve straight from the airfryer — crispy and hot",
+     ingredients:["Portioned Honey Garlic Chicken + rice (from batch cook below)"],
+     steps:[
+       "Serve one portion directly — caramelised and crispy from the airfryer",
+       "Store remaining 2 portions in fridge — they reheat well",
+       "REHEAT TIP: microwave 2.5 min + 60 sec in airfryer at 180°C to restore crispiness"
+     ]},
+    {type:"Batch Cook",name:"SUNDAY PREP — Nasi Goreng x3 + Honey Garlic Chicken x3",kcal:0,protein:0,time:"55 min total",prepNote:"Do this after breakfast. Nasi Goreng on hob, chicken in airfryer simultaneously.",
      ingredients:[
        "— NASI GORENG (x3 portions) —",
-       "600g Jumbo Kipfilet (chicken breast) cut into strips",
-       "500g Jumbo Basmatirijst (basmati rice) — cook day before or 2+ hrs ahead so it is cold",
+       "600g Jumbo Kipfilet (chicken breast) cut into bite-sized strips",
+       "500g Jumbo Basmatirijst (basmati rice) — MUST be cold, cook the night before",
        "6 Jumbo Scharrelieren (free-range eggs)",
-       "4 el Conimex Ketjap Manis (sweet soy sauce)",
-       "2 tl Conimex Sambal Oelek (chilli paste)",
+       "5 el Conimex Ketjap Manis (sweet soy sauce)",
+       "2 tl Conimex Sambal Oelek (chilli paste) — add more to taste",
+       "1 tl vissaus (fish sauce) — secret ingredient, adds deep savoury flavour",
+       "1 tl vers geraspte gember (fresh ginger) or gemberpoeder",
        "4 teentjes knoflook (garlic cloves) minced",
-       "3 Jumbo Lente-ui (spring onion) sliced",
+       "4 Jumbo Lente-ui (spring onion) — whites and greens separated",
        "2 el Jumbo Zonnebloemolie (sunflower oil)",
+       "— HONEY GARLIC CHICKEN (x3 portions) —",
+       "700g Jumbo Kippendijen zonder bot (boneless chicken thighs)",
+       "5 el Jumbo Honing (honey)",
+       "4 el Conimex Sojasaus (soy sauce)",
+       "5 teentjes knoflook (garlic cloves) minced or grated",
+       "1 tl gemberpoeder (ginger powder)",
+       "1 tl chilipoeder or chilli flakes — for heat and balance",
+       "1 el rijstazijn (rice vinegar) — balances the sweetness, do not skip",
+       "1 el Jumbo Sesamolie (sesame oil)",
+       "Jumbo Sesamzaad (sesame seeds) for garnish",
+       "300g Jumbo Basmatirijst (basmati rice) — cook separately"
+     ],
+     steps:[
+       "START RICE: Cook 300g rice in a pot — set aside for chicken portions",
+       "HONEY GARLIC SAUCE: Mix honey, soy sauce, garlic, ginger, chilli, rice vinegar in a bowl — set aside",
+       "AIRFRYER CHICKEN: Pat chicken thighs completely dry with kitchen paper (critical for crispiness)",
+       "Season both sides with salt, pepper and a pinch of garlic powder",
+       "Airfryer at 200°C for 20 min, flipping halfway — skin should be deep golden and crispy",
+       "While chicken airfries, start Nasi Goreng on the hob",
+       "NASI GORENG: Heat oil in wok or large pan on MAXIMUM heat — it must be smoking hot",
+       "Fry garlic and spring onion whites 1 min, add chicken strips — stir-fry 5 min",
+       "Push everything to the side, crack eggs in and scramble until just set",
+       "Add cold rice — break up any clumps, stir-fry 2 min on high heat",
+       "Add ketjap manis, sambal, fish sauce and ginger — toss everything hard for 2 min",
+       "Taste — should be bold, smoky and slightly spicy. Add more sambal if needed",
+       "Top with spring onion greens, portion into 3 containers",
+       "FINISH CHICKEN: When done, immediately pour honey garlic sauce over hot chicken in pan",
+       "Toss 1-2 min on hob on medium heat until sauce is sticky and caramelised",
+       "Drizzle sesame oil, scatter sesame seeds, portion over rice into 3 containers",
+       "Cool uncovered 10 min before sealing — store in fridge up to 3 days"
+     ]}
+  ]},
+  {day:"Monday",prep:false,theme:"Grab & Go Day",meals:[
+    {type:"Breakfast",name:"Greek Yogurt Power Bowl",kcal:460,protein:30,time:"2 min",prepNote:null,
+     ingredients:[
+       "200g Jumbo Griekse Yoghurt 0% (Greek yogurt)",
+       "40g Jumbo Granola Naturel (plain granola)",
+       "150g Jumbo Diepvries Bosvruchten (frozen mixed berries, thawed overnight)",
+       "30g Jumbo Gemengde Noten (mixed nuts)",
+       "1 el Jumbo Honing (honey)"
+     ],
+     steps:[
+       "Leave berries on counter 10 min or microwave 45 sec to thaw",
+       "Scoop yogurt into bowl, top with everything",
+       "Drizzle honey — done in under 2 min"
+     ]},
+    {type:"Lunch",name:"Nasi Goreng (from Sunday batch)",kcal:660,protein:40,time:"3 min reheat",prepNote:"Add splash of water + soy sauce before microwaving",
+     ingredients:[
+       "Portioned Nasi Goreng container",
+       "1 tl Conimex Sojasaus (soy sauce)",
+       "splash of water",
+       "extra Conimex Sambal Oelek if you want it spicier"
+     ],
+     steps:[
+       "Add splash of water and a teaspoon of soy sauce to container",
+       "Microwave 3 min, stir halfway through",
+       "Add extra sambal on top if you want — done"
+     ]},
+    {type:"Dinner",name:"Honey Garlic Chicken (from Sunday batch)",kcal:680,protein:46,time:"3 min reheat",prepNote:"Best reheated in airfryer to restore crispiness",
+     ingredients:[
+       "Portioned Honey Garlic Chicken + rice container",
+       "splash of water on the rice"
+     ],
+     steps:[
+       "Add a splash of water to the rice side only",
+       "Microwave 2.5 min then transfer chicken to airfryer tray",
+       "Airfryer 180°C for 60-90 sec to crisp back up",
+       "Or just microwave 3 min if you don't mind softer texture"
+     ]}
+  ]},
+  {day:"Tuesday",prep:false,theme:"Pull Day Fuel",meals:[
+    {type:"Breakfast",name:"Scrambled Eggs + Smoked Chicken + Fruit",kcal:490,protein:38,time:"8 min",prepNote:null,
+     ingredients:[
+       "4 Jumbo Scharrelieren (free-range eggs)",
+       "100g Jumbo Gerookte Kipfilet (smoked chicken breast slices)",
+       "1 el Jumbo Roomboter (butter)",
+       "handje Jumbo Diepvries Bosvruchten (frozen mixed berries, thawed)",
+       "1 banaan (banana)",
+       "salt, black pepper, chilli flakes"
+     ],
+     steps:[
+       "Melt butter on low-medium heat",
+       "Scramble eggs slowly — remove while still glossy",
+       "Season with salt, pepper and chilli flakes",
+       "Serve with smoked chicken slices and fruit on the side"
+     ]},
+    {type:"Lunch",name:"Nasi Goreng (from Sunday batch)",kcal:660,protein:40,time:"3 min reheat",prepNote:"Last Nasi Goreng container from Sunday",
+     ingredients:[
+       "Portioned Nasi Goreng container",
+       "1 tl soy sauce + splash of water"
+     ],
+     steps:[
+       "Add soy sauce and splash of water",
+       "Microwave 3 min, stir halfway — done"
+     ]},
+    {type:"Dinner",name:"Honey Garlic Chicken (from Sunday batch)",kcal:680,protein:46,time:"3 min reheat",prepNote:"Last Honey Garlic Chicken container",
+     ingredients:[
+       "Portioned Honey Garlic Chicken + rice container"
+     ],
+     steps:[
+       "Microwave 2.5 min + 90 sec airfryer at 180°C for crispy finish",
+       "Or microwave 3 min total — still delicious"
+     ]}
+  ]},
+  {day:"Wednesday",prep:true,theme:"Batch Prep Day — Quick Version",meals:[
+    {type:"Breakfast",name:"Greek Yogurt Power Bowl",kcal:460,protein:30,time:"2 min",prepNote:null,
+     ingredients:[
+       "200g Jumbo Griekse Yoghurt 0% (Greek yogurt)",
+       "40g Jumbo Granola Naturel (plain granola)",
+       "150g Jumbo Diepvries Bosvruchten (frozen mixed berries, thawed)",
+       "30g Jumbo Gemengde Noten (mixed nuts)",
+       "1 el Jumbo Honing (honey)"
+     ],
+     steps:[
+       "Thaw berries 10 min or microwave 45 sec",
+       "Scoop yogurt, top with everything, drizzle honey — done"
+     ]},
+    {type:"Lunch",name:"Lemon Herb Chicken + Sweet Potato (from Wednesday batch)",kcal:680,protein:46,time:"0 min — eat from batch",prepNote:"Serve straight from airfryer — golden and fragrant",
+     ingredients:["Portioned Lemon Herb Chicken + sweet potato (from batch cook below)"],
+     steps:[
+       "Serve one portion directly — no reheating needed",
+       "Store remaining 2 portions in fridge for Thu and Fri",
+       "REHEAT TIP: airfryer 180°C for 3-4 min to restore crispiness, or microwave 3 min"
+     ]},
+    {type:"Dinner",name:"Beef Taco Bowl (from Wednesday batch)",kcal:690,protein:46,time:"0 min — eat from batch",prepNote:"Assemble tacos fresh — beef from batch",
+     ingredients:[
+       "Portioned Beef Taco Bowl (from batch cook below)",
+       "Jumbo Volkoren Tortillas (wholegrain tortillas) — warm in dry pan",
+       "Jumbo Geraspte Kaas (grated cheese)",
+       "Salsa jar",
+       "Fresh lime wedges",
+       "Verse Koriander (fresh coriander)"
+     ],
+     steps:[
+       "Serve beef + bean mix directly — still hot from cooking",
+       "Warm tortilla in dry pan 30 sec each side",
+       "Fill with beef mix, top with cheese, salsa, lime squeeze and coriander",
+       "Store remaining 2 portions of beef mix in fridge for Thu and Fri"
+     ]},
+    {type:"Batch Cook",name:"WEDNESDAY PREP — Lemon Herb Chicken x3 + Beef Taco Bowl x3",kcal:0,protein:0,time:"30 min total",prepNote:"Quick weekday prep — airfryer does most of the work while you make the beef.",
+     ingredients:[
+       "— LEMON HERB CHICKEN + SWEET POTATO (x3 portions) —",
+       "700g Jumbo Kippendijen zonder bot (boneless chicken thighs)",
+       "2 citroenen (lemons) — juice and zest",
+       "3 el Jumbo Olijfolie (olive oil)",
+       "4 teentjes knoflook (garlic cloves) minced",
+       "1 tl Jumbo Gerookt Paprikapoeder (smoked paprika)",
+       "1 tl Jumbo Komijnpoeder (ground cumin)",
+       "1 tl gedroogde oregano (dried oregano)",
+       "1 tl chilipoeder (chilli powder)",
+       "salt and black pepper generously",
+       "2 grote Jumbo Zoete Aardappel (large sweet potatoes) cubed",
+       "1 el Jumbo Olijfolie (olive oil) for sweet potato",
        "— BEEF TACO BOWL (x3 portions) —",
        "600g Jumbo Rundergehakt (lean ground beef)",
        "2 blikken Jumbo Zwarte Bonen (canned black beans) drained",
@@ -87,129 +269,154 @@ const MEAL_PLAN=[
        "1 tl Jumbo Komijnpoeder (ground cumin)",
        "1 tl Jumbo Gerookt Paprikapoeder (smoked paprika)",
        "1 tl chilipoeder (chilli powder)",
-       "3 el Conimex Sojasaus (soy sauce)",
+       "1 tl gedroogde oregano (dried oregano)",
        "1 blik Jumbo Tomatenblokjes (canned chopped tomatoes)",
-       "1 el Jumbo Zonnebloemolie (sunflower oil)",
-       "— TO SERVE EACH DAY (not batch cooked) —",
-       "Jumbo Volkoren Tortillas (wholegrain tortillas)","Jumbo Geraspte Kaas (grated cheese)","Salsa jar","Fresh lime wedges","Fresh coriander"],
+       "2 el Conimex Sojasaus (soy sauce)",
+       "juice of 1 lime",
+       "1 el Jumbo Zonnebloemolie (sunflower oil)"
+     ],
      steps:[
-       "NASI GORENG: Heat oil in large wok or pan on high heat",
-       "Fry garlic 1 min until fragrant, add chicken strips, cook 5 min",
-       "Push to side, crack eggs in and scramble until just set",
-       "Add cold rice, ketjap manis and sambal — stir-fry everything 4 min",
-       "Top with spring onion, taste and add more sambal if needed",
-       "Portion into 3 containers — set aside",
-       "BEEF TACO BOWL: Heat oil in separate pan, brown beef 5 min breaking up lumps",
-       "Add garlic, cumin, paprika, chilli — stir 1 min",
-       "Add tomatoes and soy sauce, simmer 8 min until rich and saucy (not dry!)",
-       "Add black beans, stir through 2 min — taste, adjust seasoning",
-       "Portion beef mix into 3 containers — tortillas, cheese, salsa, lime served fresh each day",
-       "Cool both dishes before sealing — store in fridge up to 3 days"]}
-  ]},
-  {day:"Monday",prep:false,theme:"Grab & Go Day",meals:[
-    {type:"Breakfast",name:"Greek Yogurt Bowl",kcal:460,protein:30,time:"3 min",prepNote:null,
-     ingredients:["200g Jumbo Griekse Yoghurt 0% (Greek yogurt)","40g Jumbo Granola Naturel (plain granola)","150g Jumbo Diepvries Bosvruchten (frozen mixed berries, thawed overnight)","30g Jumbo Gemengde Noten (mixed nuts)","1 el Jumbo Honing (honey)"],
-     steps:["Scoop yogurt into bowl","Top with berries, granola and nuts","Drizzle honey — done"]},
-    {type:"Lunch",name:"Nasi Goreng (from Sunday batch)",kcal:650,protein:38,time:"3 min reheat",prepNote:"Add splash of water before microwaving",
-     ingredients:["Portioned Nasi Goreng container","splash of water"],
-     steps:["Add a small splash of water to container","Microwave 3 min — done"]},
-    {type:"Dinner",name:"Beef Taco Bowl (from Sunday batch)",kcal:680,protein:44,time:"3 min reheat",prepNote:"Reheat beef mix, assemble fresh",
-     ingredients:["Portioned Beef Taco Bowl container","Jumbo Volkoren Tortillas","Jumbo Geraspte Kaas (grated cheese)","salsa","fresh lime","fresh coriander"],
-     steps:["Microwave beef + bean mix 3 min with splash of water","Warm tortilla in dry pan 30 sec each side","Fill with beef mix, cheese, salsa, lime and coriander"]}
-  ]},
-  {day:"Tuesday",prep:false,theme:"Pull Day Fuel",meals:[
-    {type:"Breakfast",name:"Egg & Smoked Chicken Wrap",kcal:500,protein:38,time:"10 min",prepNote:null,
-     ingredients:["3 Jumbo Scharrelieren (free-range eggs)","80g Jumbo Gerookte Kipfilet (smoked chicken breast slices)","1 Jumbo Volkoren Tortillas (wholegrain tortilla)","handje spinazie (spinach)","1 el Jumbo Roomboter (butter)","Conimex Sambal Oelek (chilli paste) or hot sauce"],
-     steps:["Scramble eggs in butter 2 min on low heat","Warm tortilla in same pan 30 sec","Layer smoked chicken, scrambled eggs and spinach on tortilla","Add a dash of sambal, roll tightly and eat"]},
-    {type:"Lunch",name:"Nasi Goreng (from Sunday batch)",kcal:650,protein:38,time:"3 min reheat",prepNote:"Last Nasi Goreng container",
-     ingredients:["Portioned Nasi Goreng container","splash of water"],
-     steps:["Add splash of water","Microwave 3 min — done"]},
-    {type:"Dinner",name:"Beef Taco Bowl (from Sunday batch)",kcal:680,protein:44,time:"3 min reheat",prepNote:"Last Beef Taco Bowl container",
-     ingredients:["Portioned Beef Taco Bowl container","Jumbo Volkoren Tortillas","Jumbo Geraspte Kaas (grated cheese)","salsa","fresh lime","fresh coriander"],
-     steps:["Microwave beef + bean mix 3 min with splash of water","Warm tortilla in dry pan 30 sec","Fill and assemble — done"]}
-  ]},
-  {day:"Wednesday",prep:true,theme:"Batch Prep Day",meals:[
-    {type:"Breakfast",name:"Greek Yogurt Bowl",kcal:460,protein:30,time:"3 min",prepNote:null,
-     ingredients:["200g Jumbo Griekse Yoghurt 0% (Greek yogurt)","40g Jumbo Granola Naturel (plain granola)","150g Jumbo Diepvries Bosvruchten (frozen mixed berries, thawed)","30g Jumbo Gemengde Noten (mixed nuts)","1 el Jumbo Honing (honey)"],
-     steps:["Scoop yogurt into bowl","Top with berries, granola and nuts","Drizzle honey — done"]},
-    {type:"Lunch",name:"Butter Chicken + Paratha (from Wednesday batch)",kcal:700,protein:46,time:"0 min — eat from batch",prepNote:"Serve with a fresh hot paratha",
-     ingredients:["Portioned Butter Chicken (from batch cook below)","1-2 Kawan Frozen Parathas"],
-     steps:["Serve one portion of butter chicken directly","Heat paratha in dry pan 2 min each side until puffed and golden — no oil needed","Tear and dip into the curry","Store remaining 2 portions in fridge for Thu and Fri"]},
-    {type:"Dinner",name:"Honey Garlic Chicken + Noodles (from Wednesday batch)",kcal:670,protein:44,time:"0 min — eat from batch",prepNote:"Serve straight from the pan",
-     ingredients:["Portioned Honey Garlic Chicken + noodles + veg (from batch cook below)"],
-     steps:["Serve one portion directly","Store remaining 2 portions in fridge for Thu and Fri dinner"]},
-    {type:"Batch Cook",name:"WEDNESDAY PREP — Butter Chicken x3 + Honey Garlic Chicken x3",kcal:0,protein:0,time:"60 min total",prepNote:"Do this after breakfast. Makes all lunches and dinners for Wed, Thu, Fri.",
-     ingredients:[
-       "— BUTTER CHICKEN (x3 portions) —",
-       "600g Jumbo Kipfilet (chicken breast) cubed",
-       "2 el Jumbo Roomboter (butter) — generous",
-       "1 el tomatenpuree (tomato paste) — fry this first, KEY for flavour",
-       "1 blik Jumbo Tomatenblokjes (canned chopped tomatoes)",
-       "3 el Patak's Butter Chicken Sauce (jar)",
-       "2 el Jumbo Kookroom (single cream)",
-       "1 tl Jumbo Garam Masala (spice blend)",
-       "1 tl Jumbo Komijnpoeder (ground cumin)",
-       "Kawan Frozen Parathas (heat fresh each day — no oil needed)",
-       "— HONEY GARLIC CHICKEN (x3 portions) —",
-       "600g Jumbo Kippendijen (boneless chicken thighs) sliced",
-       "4 teentjes knoflook (garlic cloves) minced",
-       "3 el Jumbo Honing (honey)",
-       "3 el Conimex Sojasaus (soy sauce)",
-       "1 el Jumbo Roomboter (butter)",
-       "1 tl gemberpoeder (ginger powder)",
-       "300g Jumbo Eiermie (egg noodles)",
-       "1 krop broccoli (broccoli) cut into florets",
-       "1 Jumbo Paprika Mix (bell pepper) sliced",
-       "1 el Jumbo Sesamolie (sesame oil)"],
-     steps:[
-       "BUTTER CHICKEN: Melt butter in pan on medium-high heat",
-       "Add tomato paste — fry in the butter 2 min stirring constantly (removes bitterness, builds flavour — do not skip)",
-       "Add chicken chunks, cook 5 min until golden",
-       "Add Patak's sauce, tomatoes, garam masala and cumin — stir well",
-       "Simmer on low 12 min — should be rich and bold, not watery",
-       "Stir in cream, taste and adjust salt",
-       "Portion into 3 containers (sauce and all — do not drain)",
-       "REHEAT TIP: add 1 tbsp water before microwaving, stir halfway through",
-       "HONEY GARLIC CHICKEN: Mix honey, soy sauce, garlic and ginger in small bowl",
-       "Pan-fry chicken thighs in butter 6 min each side until cooked through",
-       "Pour sauce over chicken, toss 2 min until sticky and coated",
-       "Boil noodles 4 min, drain — steam broccoli and pepper with lid 4 min",
-       "Drizzle sesame oil, portion chicken + veg + noodles into 3 containers",
-       "REHEAT TIP: add splash of soy sauce and water before microwaving",
-       "Cool both dishes before sealing — store in fridge up to 3 days"]}
+       "MARINATE CHICKEN: Mix lemon juice + zest, olive oil, garlic, paprika, cumin, oregano, chilli, salt and pepper in a bowl",
+       "Toss chicken thighs in marinade — coat well. Even 10 min makes a big difference",
+       "SWEET POTATO: Cube sweet potatoes, toss with olive oil, salt, pepper and a pinch of paprika",
+       "AIRFRYER: Add chicken and sweet potato to airfryer basket (they can share space)",
+       "200°C for 22 min — flip chicken and toss sweet potato at the 12 min mark",
+       "While airfryer runs, make the beef:",
+       "BEEF TACO: Heat oil in pan, brown beef 5 min breaking up lumps completely",
+       "Add garlic, cumin, paprika, chilli, oregano — stir 1 min until fragrant",
+       "Add tomatoes and soy sauce — simmer 8 min, stirring occasionally",
+       "Add black beans, stir through 2 min",
+       "Squeeze in lime juice, taste — should be smoky, bold and slightly tangy",
+       "If too dry add a splash of water — it should be saucy not crumbly",
+       "PORTION: Divide chicken + sweet potato into 3 containers. Portion beef mix into 3 containers",
+       "Cool 10 min before sealing — fridge up to 3 days"
+     ]}
   ]},
   {day:"Thursday",prep:false,theme:"Legs Day Load",meals:[
-    {type:"Breakfast",name:"Scrambled Eggs + Toast + Fruit",kcal:480,protein:30,time:"10 min",prepNote:null,
-     ingredients:["4 Jumbo Scharrelieren (free-range eggs)","2 sneetjes Jumbo Volkoren Brood (wholegrain bread)","1 el Jumbo Roomboter (butter)","1 banaan (banana)","handje Jumbo Diepvries Bosvruchten (frozen mixed berries, thawed)","salt and pepper"],
-     steps:["Melt butter in pan on low heat","Scramble eggs slowly 3 min","Toast bread","Serve with banana and berries on the side"]},
-    {type:"Lunch",name:"Butter Chicken + Paratha (from Wednesday batch)",kcal:700,protein:46,time:"5 min",prepNote:"Heat paratha fresh — makes all the difference",
-     ingredients:["Portioned Butter Chicken container","1-2 Kawan Frozen Parathas","1 tbsp water"],
-     steps:["Add 1 tbsp water to container, microwave 3 min, stir halfway through","Heat paratha in dry pan 2 min each side until golden and puffed","Tear and dip into curry"]},
-    {type:"Dinner",name:"Honey Garlic Chicken + Noodles (from Wednesday batch)",kcal:670,protein:44,time:"3 min reheat",prepNote:"Add soy + water before microwaving",
-     ingredients:["Portioned Honey Garlic Chicken container","splash of soy sauce + splash of water"],
-     steps:["Add splash of soy sauce and water","Microwave 3 min — done"]}
+    {type:"Breakfast",name:"Scrambled Eggs + Smoked Chicken + Fruit",kcal:490,protein:38,time:"8 min",prepNote:null,
+     ingredients:[
+       "4 Jumbo Scharrelieren (free-range eggs)",
+       "100g Jumbo Gerookte Kipfilet (smoked chicken breast slices)",
+       "1 el Jumbo Roomboter (butter)",
+       "1 banaan (banana)",
+       "handje Jumbo Kerstomaten (cherry tomatoes)",
+       "salt, black pepper, chilli flakes"
+     ],
+     steps:[
+       "Melt butter on low-medium heat",
+       "Scramble eggs slowly, remove while still glossy",
+       "Serve with smoked chicken, banana and cherry tomatoes"
+     ]},
+    {type:"Lunch",name:"Lemon Herb Chicken + Sweet Potato (from Wednesday batch)",kcal:680,protein:46,time:"4 min reheat",prepNote:"Best reheated in airfryer",
+     ingredients:[
+       "Portioned Lemon Herb Chicken + sweet potato container"
+     ],
+     steps:[
+       "Airfryer 180°C for 4 min — chicken crisps back up beautifully",
+       "Or microwave 3 min if short on time — still tasty"
+     ]},
+    {type:"Dinner",name:"Beef Taco Bowl (from Wednesday batch)",kcal:690,protein:46,time:"5 min reheat",prepNote:"Reheat beef, assemble tacos fresh",
+     ingredients:[
+       "Portioned Beef Taco Bowl container",
+       "Jumbo Volkoren Tortillas","Jumbo Geraspte Kaas (grated cheese)",
+       "Salsa jar","fresh lime","Verse Koriander (fresh coriander)"
+     ],
+     steps:[
+       "Microwave beef + bean mix 3 min with a splash of water",
+       "Warm tortilla in dry pan 30 sec each side",
+       "Fill with beef, cheese, salsa, lime and coriander"
+     ]}
   ]},
   {day:"Friday",prep:false,theme:"Push Day",meals:[
-    {type:"Breakfast",name:"Egg & Smoked Chicken Wrap",kcal:500,protein:38,time:"10 min",prepNote:null,
-     ingredients:["3 Jumbo Scharrelieren (free-range eggs)","80g Jumbo Gerookte Kipfilet (smoked chicken breast slices)","1 Jumbo Volkoren Tortillas (wholegrain tortilla)","handje spinazie (spinach)","1 el Jumbo Roomboter (butter)","Conimex Sambal Oelek (chilli paste) or hot sauce"],
-     steps:["Scramble eggs in butter 2 min on low heat","Warm tortilla in same pan 30 sec","Layer smoked chicken, eggs and spinach","Add sambal, roll and eat"]},
-    {type:"Lunch",name:"Butter Chicken + Paratha (from Wednesday batch)",kcal:700,protein:46,time:"5 min",prepNote:"Last Butter Chicken container",
-     ingredients:["Portioned Butter Chicken container","1-2 Kawan Frozen Parathas","1 tbsp water"],
-     steps:["Add 1 tbsp water, microwave 3 min, stir halfway","Heat paratha in dry pan 2 min each side","Tear and dip — done"]},
-    {type:"Dinner",name:"Honey Garlic Chicken + Noodles (from Wednesday batch)",kcal:670,protein:44,time:"3 min reheat",prepNote:"Last Honey Garlic Chicken container",
-     ingredients:["Portioned Honey Garlic Chicken container","splash of soy sauce + splash of water"],
-     steps:["Add splash of soy sauce and water","Microwave 3 min — last one from batch"]}
+    {type:"Breakfast",name:"Greek Yogurt Power Bowl",kcal:460,protein:30,time:"2 min",prepNote:null,
+     ingredients:[
+       "200g Jumbo Griekse Yoghurt 0% (Greek yogurt)",
+       "40g Jumbo Granola Naturel (plain granola)",
+       "150g Jumbo Diepvries Bosvruchten (frozen mixed berries, thawed)",
+       "30g Jumbo Gemengde Noten (mixed nuts)",
+       "1 el Jumbo Honing (honey)"
+     ],
+     steps:[
+       "Thaw berries, scoop yogurt, top with everything",
+       "Drizzle honey — done"
+     ]},
+    {type:"Lunch",name:"Lemon Herb Chicken + Sweet Potato (from Wednesday batch)",kcal:680,protein:46,time:"4 min reheat",prepNote:"Last container from Wednesday",
+     ingredients:[
+       "Portioned Lemon Herb Chicken + sweet potato container"
+     ],
+     steps:[
+       "Airfryer 180°C for 4 min for crispy finish",
+       "Or microwave 3 min — last one from batch"
+     ]},
+    {type:"Dinner",name:"Beef Taco Bowl (from Wednesday batch)",kcal:690,protein:46,time:"5 min reheat",prepNote:"Last Beef Taco Bowl container",
+     ingredients:[
+       "Portioned Beef Taco Bowl container",
+       "Jumbo Volkoren Tortillas","Jumbo Geraspte Kaas (grated cheese)",
+       "Salsa jar","fresh lime","Verse Koriander (fresh coriander)"
+     ],
+     steps:[
+       "Microwave beef 3 min with splash of water",
+       "Warm tortilla, fill and assemble — done"
+     ]}
   ]},
   {day:"Saturday",prep:false,theme:"Fresh Cook Day",meals:[
-    {type:"Breakfast",name:"Scrambled Eggs + Toast + Fruit",kcal:480,protein:30,time:"10 min",prepNote:null,
-     ingredients:["4 Jumbo Scharrelieren (free-range eggs)","2 sneetjes Jumbo Volkoren Brood (wholegrain bread)","1 el Jumbo Roomboter (butter)","1 banaan (banana)","handje Jumbo Kerstomaten (cherry tomatoes)","salt and pepper"],
-     steps:["Melt butter in pan on low heat","Scramble eggs slowly 3 min","Toast bread","Serve with banana and cherry tomatoes"]},
+    {type:"Breakfast",name:"Scrambled Eggs + Smoked Chicken + Fruit",kcal:490,protein:38,time:"8 min",prepNote:null,
+     ingredients:[
+       "4 Jumbo Scharrelieren (free-range eggs)",
+       "100g Jumbo Gerookte Kipfilet (smoked chicken breast slices)",
+       "1 el Jumbo Roomboter (butter)",
+       "1 banaan (banana)",
+       "handje Jumbo Kerstomaten (cherry tomatoes)",
+       "salt, black pepper, chilli flakes"
+     ],
+     steps:[
+       "Melt butter on low-medium heat",
+       "Scramble eggs slowly, remove while slightly glossy",
+       "Season well, serve with smoked chicken and fruit"
+     ]},
     {type:"Lunch",name:"Poke Bowl",kcal:620,protein:40,time:"10 min",prepNote:"Treat meal — no real cooking",
-     ingredients:["150g Jumbo Basmatirijst (basmati rice) cooked and cooled","1 blik Jongen Tonijn in Water (canned tuna) or 120g Jumbo Zalmfilet (salmon fillet)","halve Jumbo Avocado (avocado)","halve Jumbo Komkommer (cucumber) sliced","Jumbo Diepvries Edamame (frozen edamame) — 3 min microwave","2 el Conimex Sojasaus (soy sauce)","1 tl Jumbo Sesamolie (sesame oil)","Jumbo Sesamzaad (sesame seeds)","sriracha optional"],
-     steps:["Reheat rice 2 min in microwave","Microwave edamame 3 min","Scoop rice into bowl","Top with fish, avocado, cucumber and edamame","Drizzle soy sauce and sesame oil, sprinkle sesame seeds"]},
-    {type:"Dinner",name:"Pan-Seared Steak + Microwave Sweet Potato",kcal:750,protein:52,time:"20 min",prepNote:"Treat meal — swap for Salmon Rice Bowl on off-weeks",
-     ingredients:["1 Jumbo Entrecote (sirloin steak, ~200g)","1 grote Jumbo Zoete Aardappel (large sweet potato)","1 el Jumbo Roomboter (butter)","2 teentjes knoflook (garlic cloves)","handje Jumbo Kerstomaten (cherry tomatoes)","salt and pepper"],
-     steps:["Pierce sweet potato all over with fork","Microwave 6 min on full power, flip halfway","Pat steak completely dry, season generously","Heat pan until very hot, add butter","Sear steak 3 min each side — do not move it","Add garlic last minute, baste with butter","Rest 3 min before slicing","Serve with halved sweet potato and cherry tomatoes"]}
+     ingredients:[
+       "150g Jumbo Basmatirijst (basmati rice) cooked and cooled",
+       "120g Jumbo Zalmfilet (salmon fillet) or 1 blik Jongen Tonijn in Water (canned tuna)",
+       "halve Jumbo Avocado (avocado) sliced",
+       "halve Jumbo Komkommer (cucumber) thinly sliced",
+       "Jumbo Diepvries Edamame (frozen edamame) — microwave 3 min",
+       "2 el Conimex Sojasaus (soy sauce)",
+       "1 tl Jumbo Sesamolie (sesame oil)",
+       "1 tl rijstazijn (rice vinegar) — lifts everything",
+       "Jumbo Sesamzaad (sesame seeds)",
+       "sriracha to taste"
+     ],
+     steps:[
+       "Reheat rice 2 min in microwave",
+       "Microwave edamame 3 min",
+       "If using salmon: airfryer 200°C for 8 min — flakes perfectly",
+       "Arrange rice in bowl, top with fish, avocado, cucumber and edamame",
+       "Mix soy sauce, sesame oil and rice vinegar — drizzle over bowl",
+       "Sprinkle sesame seeds and add sriracha to taste"
+     ]},
+    {type:"Dinner",name:"Pan-Seared Steak + Airfryer Sweet Potato",kcal:760,protein:54,time:"25 min",prepNote:"Treat meal — swap for salmon poke on off-weeks",
+     ingredients:[
+       "1 Jumbo Entrecote (sirloin steak, ~200-220g)",
+       "1 grote Jumbo Zoete Aardappel (large sweet potato) cubed",
+       "1 el Jumbo Roomboter (butter)",
+       "2 teentjes knoflook (garlic cloves)",
+       "1 tl Jumbo Gerookt Paprikapoeder (smoked paprika) — for sweet potato",
+       "1 el Jumbo Olijfolie (olive oil) — for sweet potato",
+       "handje Jumbo Kerstomaten (cherry tomatoes)",
+       "salt and black pepper — generous"
+     ],
+     steps:[
+       "Cube sweet potato, toss with olive oil, paprika, salt and pepper",
+       "Airfryer 200°C for 20-22 min, shaking halfway — golden and crispy edges",
+       "Take steak out of fridge 15 min before cooking — room temperature sears better",
+       "Pat completely dry with kitchen paper, season very generously on both sides",
+       "Heat pan until smoking hot — add butter",
+       "Sear steak 3 min each side for medium — press gently, do not move it",
+       "Add garlic cloves last minute, tilt pan and baste steak with foaming butter",
+       "Rest on a board for 3-4 min before slicing — do not skip this",
+       "Serve sliced steak over sweet potato with cherry tomatoes"
+     ]}
   ]}
 ];
 
@@ -220,61 +427,55 @@ const GROCERY={
     {name:"Jumbo Bananen (bananas)",qty:"6 stuks",est:"\u20ac1.19"},
     {name:"Jumbo Kerstomaten (cherry tomatoes)",qty:"250g punnet",est:"\u20ac1.49"},
     {name:"Jumbo Komkommer (cucumber)",qty:"1 stuk",est:"\u20ac0.59"},
-    {name:"Jumbo Paprika Mix (mixed bell peppers)",qty:"2 stuks",est:"\u20ac1.29"},
     {name:"Jumbo Uien (onions)",qty:"1 zak (6 stuks)",est:"\u20ac0.99"},
-    {name:"Jumbo Knoflook (garlic)",qty:"2 bollen",est:"\u20ac0.99"},
-    {name:"Jumbo Broccoli (broccoli)",qty:"1 krop (~400g)",est:"\u20ac1.19"},
+    {name:"Jumbo Knoflook (garlic)",qty:"2 bollen — je gebruikt veel!",est:"\u20ac0.99"},
     {name:"Jumbo Lente-ui (spring onion)",qty:"1 bosje",est:"\u20ac0.59"},
-    {name:"Jumbo Zoete Aardappel (sweet potato)",qty:"1 stuk",est:"\u20ac0.79"},
+    {name:"Jumbo Zoete Aardappel (large sweet potatoes)",qty:"3 stuks",est:"\u20ac2.37"},
     {name:"Jumbo Avocado (avocado)",qty:"1 stuk",est:"\u20ac0.99"},
-    {name:"Verse Limoenen (fresh lime)",qty:"2 stuks",est:"\u20ac0.69"},
+    {name:"Verse Citroenen (fresh lemons)",qty:"3 stuks",est:"\u20ac0.99"},
+    {name:"Verse Limoenen (fresh limes)",qty:"2 stuks",est:"\u20ac0.69"},
     {name:"Verse Koriander (fresh coriander)",qty:"1 bosje",est:"\u20ac0.79"},
+    {name:"Verse Gember (fresh ginger) or gemberpoeder",qty:"1 stukje (~30g)",est:"\u20ac0.49"},
     {name:"Jumbo Diepvries Bosvruchten (frozen mixed berries)",qty:"500g zak",est:"\u20ac2.29"},
     {name:"Jumbo Diepvries Edamame (frozen edamame)",qty:"400g zak",est:"\u20ac2.49"},
-    {name:"Spinazie (spinach)",qty:"200g bag",est:"\u20ac1.19"},
   ]},
   dairy:{label:"Dairy & Eggs",color:"#00BFFF",items:[
-    {name:"Jumbo Scharrelieren (free-range eggs)",qty:"24 stuks (2x 12-pack)",est:"\u20ac5.98"},
-    {name:"Jumbo Griekse Yoghurt 0% (Greek yogurt)",qty:"500g tub",est:"\u20ac1.89"},
+    {name:"Jumbo Scharrelieren (free-range eggs)",qty:"18 stuks",est:"\u20ac4.49"},
+    {name:"Jumbo Griekse Yoghurt 0% (Greek yogurt)",qty:"2x 500g tub",est:"\u20ac3.78"},
     {name:"Jumbo Halfvolle Melk (semi-skimmed milk)",qty:"2 liter",est:"\u20ac1.59"},
     {name:"Jumbo Roomboter (butter)",qty:"250g",est:"\u20ac2.29"},
-    {name:"Jumbo Kookroom (single cream)",qty:"150ml",est:"\u20ac0.99"},
     {name:"Jumbo Geraspte Kaas (grated cheese)",qty:"200g zak",est:"\u20ac1.99"},
   ]},
   meat:{label:"Meat & Fish",color:"#FF6B35",items:[
-    {name:"Jumbo Kipfilet (chicken breast)",qty:"1.2kg",est:"\u20ac8.39"},
-    {name:"Jumbo Kippendijen zonder bot (boneless chicken thighs)",qty:"600g",est:"\u20ac4.19"},
+    {name:"Jumbo Kipfilet (chicken breast)",qty:"600g — for Nasi Goreng",est:"\u20ac4.19"},
+    {name:"Jumbo Kippendijen zonder bot (boneless chicken thighs)",qty:"1.4kg (2x 700g)",est:"\u20ac9.78"},
     {name:"Jumbo Rundergehakt (lean ground beef)",qty:"600g",est:"\u20ac5.29"},
-    {name:"Jumbo Entrecote (sirloin steak)",qty:"1 stuk (~200g)",est:"\u20ac5.99"},
-    {name:"Jumbo Gerookte Kipfilet (smoked chicken breast slices)",qty:"2x 150g pack",est:"\u20ac3.98"},
-    {name:"Jongen Tonijn in Water (canned tuna)",qty:"2 blikjes (2x160g)",est:"\u20ac1.79"},
-    {name:"Jumbo Zalmfilet (salmon fillet)",qty:"2 stuks (~300g)",est:"\u20ac4.49"},
+    {name:"Jumbo Entrecote (sirloin steak)",qty:"1 stuk (~200-220g)",est:"\u20ac5.99"},
+    {name:"Jumbo Gerookte Kipfilet (smoked chicken breast slices)",qty:"3x 150g pack",est:"\u20ac5.97"},
+    {name:"Jumbo Zalmfilet (salmon fillet) or Jongen Tonijn",qty:"1 filet or 1 blik",est:"\u20ac2.99"},
   ]},
   pantry:{label:"Pantry & Dry Goods",color:"#F59E0B",items:[
     {name:"Jumbo Basmatirijst (basmati rice)",qty:"1kg",est:"\u20ac1.69"},
-    {name:"Jumbo Eiermie (egg noodles)",qty:"500g",est:"\u20ac1.49"},
-    {name:"Jumbo Volkoren Brood (wholegrain bread)",qty:"1 brood",est:"\u20ac1.89"},
     {name:"Jumbo Volkoren Tortillas (wholegrain tortillas)",qty:"2x 8 stuks",est:"\u20ac3.78"},
-    {name:"Kawan Frozen Parathas (or similar brand)",qty:"1 pack (8-10 stuks)",est:"\u20ac3.49"},
     {name:"Jumbo Granola Naturel (plain granola)",qty:"400g",est:"\u20ac2.49"},
     {name:"Jumbo Honing (honey)",qty:"350g pot",est:"\u20ac1.99"},
     {name:"Jumbo Gemengde Noten (mixed nuts)",qty:"200g",est:"\u20ac2.99"},
-    {name:"Salsa (mild or medium jar)",qty:"1 pot",est:"\u20ac1.99"},
+    {name:"Salsa (medium jar)",qty:"1 pot",est:"\u20ac1.99"},
     {name:"Conimex Ketjap Manis (sweet soy sauce)",qty:"240ml fles",est:"\u20ac2.49"},
     {name:"Conimex Sambal Oelek (chilli paste)",qty:"200ml pot",est:"\u20ac1.99"},
     {name:"Conimex Sojasaus (soy sauce)",qty:"150ml fles",est:"\u20ac1.29"},
-    {name:"Patak's Butter Chicken Sauce (jar)",qty:"350g pot",est:"\u20ac2.79"},
-    {name:"Tomatenpuree (tomato paste)",qty:"1 klein blikje (70g)",est:"\u20ac0.59"},
-    {name:"Jumbo Tomatenblokjes (canned chopped tomatoes)",qty:"2 blikjes (2x400g)",est:"\u20ac1.18"},
+    {name:"Vissaus (fish sauce)",qty:"1 klein flesje — Jumbo or toko",est:"\u20ac1.99"},
+    {name:"Rijstazijn (rice vinegar)",qty:"1 klein flesje",est:"\u20ac1.49"},
+    {name:"Jumbo Tomatenblokjes (canned chopped tomatoes)",qty:"1 blik (400g)",est:"\u20ac0.59"},
     {name:"Jumbo Zwarte Bonen (canned black beans)",qty:"2 blikjes (2x400g)",est:"\u20ac1.98"},
+    {name:"Jumbo Olijfolie (olive oil)",qty:"500ml fles",est:"\u20ac2.99"},
     {name:"Jumbo Zonnebloemolie (sunflower oil)",qty:"500ml",est:"\u20ac1.49"},
     {name:"Jumbo Sesamolie (sesame oil)",qty:"150ml",est:"\u20ac2.19"},
     {name:"Jumbo Sesamzaad (sesame seeds)",qty:"klein zakje",est:"\u20ac0.99"},
     {name:"Jumbo Komijnpoeder (ground cumin)",qty:"klein potje",est:"\u20ac0.99"},
     {name:"Jumbo Gerookt Paprikapoeder (smoked paprika)",qty:"klein potje",est:"\u20ac0.99"},
-    {name:"Jumbo Garam Masala (spice blend)",qty:"klein potje",est:"\u20ac0.99"},
-    {name:"Gemberpoeder (ginger powder)",qty:"klein potje",est:"\u20ac0.99"},
     {name:"Chilipoeder (chilli powder)",qty:"klein potje",est:"\u20ac0.99"},
+    {name:"Gedroogde Oregano (dried oregano)",qty:"klein potje",est:"\u20ac0.99"},
     {name:"Whey Protein",qty:"bestaande voorraad (existing stock)",est:"\u2014"},
     {name:"Creatine",qty:"bestaande voorraad (existing stock)",est:"\u2014"},
   ]}
