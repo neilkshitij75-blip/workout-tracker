@@ -87,10 +87,14 @@ const SEED_HISTORY=[
 ];
 const SEED_PRS=[{exercise:"Weighted Dips",weight:"+30kg",reps:8,date:"Apr 14"},{exercise:"Seated Cable Row",weight:"35kg",reps:10,date:"Apr 16"},{exercise:"Leg Press",weight:"60kg",reps:12,date:"Apr 18"}];
 const SEED_WEIGHT=69;
+const DEFAULT_PROGRAM={startDate:"2025-04-26",weeks:26,startWeight:69,goalWeight:75};
 const MGROUP={"Upper Chest":"Chest","Chest":"Chest","Chest/Triceps":"Chest","Shoulders":"Shoulders","Side Delts":"Shoulders","Front Delts":"Shoulders","Rear Delts":"Shoulders","Back":"Back","Lats":"Back","Mid Back":"Back","Quads":"Legs","Hamstrings":"Legs","Glutes":"Legs","Calves":"Legs","Biceps":"Biceps","Triceps":"Triceps"};
 const GROUPCOLOR={Chest:"#FF6B35",Back:"#8B5CF6",Shoulders:"#00BFFF",Legs:"#10B981",Biceps:"#F59E0B",Triceps:"#EF4444",Other:"#6B7A94"};
 
-function getWeekNum(){const start=new Date("2025-04-26");return Math.max(0,Math.floor((new Date()-start)/(7*24*60*60*1000)));}
+function getWeekNum(startISO){const p=String(startISO||"2025-04-26").split("-").map(Number);const start=new Date(p[0],p[1]-1,p[2]);return Math.max(0,Math.floor((new Date()-start)/(7*24*60*60*1000)));}
+function progEnd(startISO,weeks){const p=String(startISO).split("-").map(Number);const e=new Date(p[0],p[1]-1,p[2]);e.setDate(e.getDate()+(weeks||26)*7);return e;}
+function fmtRange(startISO,weeks){const p=String(startISO).split("-").map(Number);const s=new Date(p[0],p[1]-1,p[2]);const e=progEnd(startISO,weeks);const o={month:"short",day:"numeric"};return s.toLocaleDateString("en-US",o)+" – "+e.toLocaleDateString("en-US",o)+", "+e.getFullYear();}
+function fmtRangeShort(startISO,weeks){const p=String(startISO).split("-").map(Number);const s=new Date(p[0],p[1]-1,p[2]);const e=progEnd(startISO,weeks);const o={month:"short",day:"numeric"};return (s.toLocaleDateString("en-US",o)+" – "+e.toLocaleDateString("en-US",o)).toUpperCase();}
 function fmtTime(s){return`${String(Math.floor(s/60)).padStart(2,"0")}:${String(s%60).padStart(2,"0")}`}
 // All session dates are LOCAL calendar dates (YYYY-MM-DD) so day/week boundaries match the user's clock, not UTC.
 function localISO(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
@@ -198,6 +202,7 @@ function App(){
   const [history,setHistoryRaw]=useState(saved?.history||SEED_HISTORY);
   const [prs,setPrsRaw]=useState(saved?.prs||SEED_PRS);
   const [bodyWeight,setBodyWeightRaw]=useState(saved?.bodyWeight||SEED_WEIGHT);
+  const [program,setProgramRaw]=useState({...DEFAULT_PROGRAM,...(saved?.program||{})});
   const [tab,setTab]=useState("dashboard");
   const [activeW,setActiveW]=useState(null);
   const [wSets,setWSets]=useState({});
@@ -205,16 +210,28 @@ function App(){
   const [running,setRunning]=useState(false);
   const [pendingDay,setPendingDay]=useState(null);
   const timerRef=useRef(null);
+  const wakeLockRef=useRef(null);
 
-  useEffect(()=>{saveState({history,prs,bodyWeight});},[history,prs,bodyWeight]);
+  useEffect(()=>{saveState({history,prs,bodyWeight,program});},[history,prs,bodyWeight,program]);
   useEffect(()=>{
     if(running){timerRef.current=setInterval(()=>setElapsed(e=>e+1),1000);}
     else clearInterval(timerRef.current);
     return()=>clearInterval(timerRef.current);
   },[running]);
+  // Keep the screen awake while a workout is running (re-acquire after backgrounding).
+  useEffect(()=>{
+    async function acquire(){try{if("wakeLock" in navigator)wakeLockRef.current=await navigator.wakeLock.request("screen");}catch(e){}}
+    function release(){try{if(wakeLockRef.current){wakeLockRef.current.release();wakeLockRef.current=null;}}catch(e){}}
+    if(!running){release();return;}
+    acquire();
+    const onVis=()=>{if(document.visibilityState==="visible"&&!wakeLockRef.current)acquire();};
+    document.addEventListener("visibilitychange",onVis);
+    return()=>{document.removeEventListener("visibilitychange",onVis);release();};
+  },[running]);
 
   const setHistory=v=>setHistoryRaw(typeof v==="function"?v:()=>v);
   const setBodyWeight=v=>{setBodyWeightRaw(v);};
+  const setProgram=v=>setProgramRaw(v);
 
   const requestW=day=>setPendingDay(day);
   const cancelW=()=>setPendingDay(null);
@@ -273,8 +290,8 @@ function App(){
           h("div",{style:{fontSize:10,color:MUTED,letterSpacing:1.5,marginTop:1}},"MUSCLE PROGRAM · 6 MONTHS")
         ),
         h("div",{style:{textAlign:"right"}},
-          h("div",{style:{fontSize:11,color:MUTED}},bodyWeight+"kg → ",h("span",{style:{color:ACCENT,fontWeight:600}},"75kg")),
-          h("div",{style:{fontSize:10,color:MUTED,marginTop:1}},"Apr 26 – Oct 26, 2025")
+          h("div",{style:{fontSize:11,color:MUTED}},bodyWeight+"kg → ",h("span",{style:{color:ACCENT,fontWeight:600}},program.goalWeight+"kg")),
+          h("div",{style:{fontSize:10,color:MUTED,marginTop:1}},fmtRange(program.startDate,program.weeks))
         )
       ),
       running&&h("div",{style:{marginTop:10,background:"#0D1A2D",border:`1px solid ${ACCENT}33`,borderRadius:8,padding:"8px 12px",display:"flex",alignItems:"center",justifyContent:"space-between"}},
@@ -286,10 +303,10 @@ function App(){
       )
     ),
     h("div",{style:{maxWidth:640,margin:"0 auto",padding:"0 12px"}},
-      tab==="dashboard"&&h(Dashboard,{history,prs,streak,thisWeek,pendingDay,onRequest:requestW,onConfirm:confirmW,onCancel:cancelW,bodyWeight,setBodyWeight}),
+      tab==="dashboard"&&h(Dashboard,{history,prs,streak,thisWeek,pendingDay,onRequest:requestW,onConfirm:confirmW,onCancel:cancelW,bodyWeight,setBodyWeight,program}),
       tab==="workout"&&h(WorkoutScreen,{activeW,wSets,onToggle:toggleSet,onUpdate:updateSet,onAdd:addSet,onFinish:finishW,onDiscard:discardW,pendingDay,onRequest:requestW,onConfirm:confirmW,onCancel:cancelW,elapsed,running,history}),
       tab==="history"&&h(HistoryScreen,{history,setHistory}),
-      tab==="progress"&&h(ProgressScreen,{history,bodyWeight})
+      tab==="progress"&&h(ProgressScreen,{history,bodyWeight,program,setProgram})
     ),
     h("div",{style:{position:"fixed",bottom:0,left:0,right:0,background:CARD,borderTop:`1px solid ${BORDER}`,display:"flex",zIndex:100,paddingBottom:"env(safe-area-inset-bottom)"}},
       NAV.map(({id,label,icon})=>h("button",{key:id,onClick:()=>{setPendingDay(null);setTab(id);},style:{flex:1,background:"transparent",border:"none",padding:"10px 4px 8px",cursor:"pointer"}},
@@ -308,11 +325,12 @@ function SB({label,value,sub,accent}){
   );
 }
 
-function WeeklyQuote(){
-  const q=QUOTES[getWeekNum()%QUOTES.length];
+function WeeklyQuote({program}){
+  const wk=getWeekNum(program.startDate);
+  const q=QUOTES[wk%QUOTES.length];
   return h("div",{style:{background:CARD,border:`1px solid ${BORDER}`,borderLeft:`3px solid ${ACCENT}`,borderRadius:10,padding:"14px 16px",marginBottom:12,position:"relative",overflow:"hidden"}},
     h("div",{style:{position:"absolute",top:0,right:0,width:80,height:"100%",background:`linear-gradient(90deg,transparent,${ACCENT}08)`,pointerEvents:"none"}}),
-    h("div",{style:{fontFamily:FONT,fontSize:9,letterSpacing:2.5,color:ACCENT,marginBottom:8}},"WEEK "+Math.min(getWeekNum()+1,26)+" · APR 26 – OCT 26"),
+    h("div",{style:{fontFamily:FONT,fontSize:9,letterSpacing:2.5,color:ACCENT,marginBottom:8}},"WEEK "+Math.min(wk+1,program.weeks)+" · "+fmtRangeShort(program.startDate,program.weeks)),
     h("div",{style:{fontFamily:FONT,fontSize:17,fontWeight:700,color:TEXT,lineHeight:1.35}},"\u201C",q.text,"\u201D"),
     h("div",{style:{fontSize:11,color:MUTED,marginTop:8}},"\u2014 ",q.attr)
   );
@@ -427,9 +445,9 @@ function BodyWeightInput({bodyWeight,setBodyWeight}){
   );
 }
 
-function Dashboard({history,prs,streak,thisWeek,pendingDay,onRequest,onConfirm,onCancel,bodyWeight,setBodyWeight}){
+function Dashboard({history,prs,streak,thisWeek,pendingDay,onRequest,onConfirm,onCancel,bodyWeight,setBodyWeight,program}){
   return h("div",{style:{paddingTop:14}},
-    h(WeeklyQuote,null),
+    h(WeeklyQuote,{program}),
     h("div",{style:{display:"flex",gap:8,marginBottom:12}},
       h(SB,{label:"DAY STREAK",value:streak,sub:"keep going!",accent:ACCENT}),
       h(SB,{label:"THIS WEEK",value:thisWeek,sub:"of 4 planned"}),
@@ -601,13 +619,86 @@ function HistoryScreen({history,setHistory}){
   );
 }
 
-function ProgressScreen({history,bodyWeight}){
-  const wk=getWeekNum();
+// All logged sets for one exercise across history (newest first), with the top set + volume per session.
+function exerciseLog(history,exName){
+  const out=[];
+  history.forEach(hh=>{const sets=hh.logged&&hh.logged[exName];if(sets&&sets.length){
+    let best=null,vol=0;
+    sets.forEach(s=>{const w=parseFloat(s.weight)||0,r=parseInt(s.reps)||0;vol+=w*r;if(!best||w>best.w||(w===best.w&&r>best.r))best={w,r};});
+    out.push({date:hh.date,top:best,vol,count:sets.length});
+  }});
+  return out;
+}
+function loggedExercises(history){
+  const set=new Set();history.forEach(hh=>{if(hh.logged)Object.keys(hh.logged).forEach(k=>set.add(k));});
+  return [...set].sort();
+}
+
+function ExerciseHistory({history}){
+  const names=loggedExercises(history);
+  const [sel,setSel]=useState(names[0]||null);
+  useEffect(()=>{if(sel&&!names.includes(sel))setSel(names[0]||null);},[history.length]);
+  const label=h("div",{style:{fontFamily:FONT,fontSize:12,letterSpacing:2.5,color:MUTED,marginBottom:12,marginTop:4}},"EXERCISE HISTORY");
+  if(!names.length)return h("div",null,label,
+    h("div",{style:{background:CARD,border:`1px solid ${BORDER}`,borderRadius:10,padding:"14px",fontSize:12,color:MUTED,textAlign:"center"}},"Log a workout with weights to build per-exercise history.")
+  );
+  const cur=sel&&names.includes(sel)?sel:names[0];
+  const log=exerciseLog(history,cur);
+  return h("div",null,label,
+    h("div",{style:{display:"flex",flexWrap:"wrap",gap:6,marginBottom:10}},
+      names.map(n=>h("button",{key:n,onClick:()=>setSel(n),style:{background:cur===n?ACCENT:"transparent",color:cur===n?"#000":MUTED,border:`1px solid ${cur===n?ACCENT:BORDER}`,borderRadius:6,padding:"5px 10px",fontSize:11,cursor:"pointer",fontFamily:"'Barlow',sans-serif"}},n))
+    ),
+    h("div",{style:{background:CARD,border:`1px solid ${BORDER}`,borderRadius:10,padding:"14px",marginBottom:14}},
+      h("div",{style:{fontFamily:FONT,fontSize:15,fontWeight:800,color:TEXT,marginBottom:10}},cur.toUpperCase()),
+      log.map((e,i)=>h("div",{key:i,style:{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 0",borderBottom:i<log.length-1?`1px solid ${BORDER}`:"none"}},
+        h("div",{style:{fontSize:12,color:MUTED}},fmtDate(e.date)),
+        h("div",{style:{display:"flex",gap:12,alignItems:"baseline"}},
+          h("div",{style:{fontFamily:FONT,fontSize:16,fontWeight:700,color:TEXT}},e.top.w+"kg × "+e.top.r),
+          h("div",{style:{fontSize:11,color:MUTED}},e.vol+"kg vol")
+        )
+      ))
+    )
+  );
+}
+
+function ProgramSettings({program,setProgram}){
+  const [editing,setEditing]=useState(false);
+  const [f,setF]=useState(program);
+  useEffect(()=>{setF(program);},[program]);
+  function save(){
+    const weeks=Math.max(1,parseInt(f.weeks)||program.weeks);
+    const startWeight=parseFloat(f.startWeight)||program.startWeight;
+    const goalWeight=parseFloat(f.goalWeight)||program.goalWeight;
+    const startDate=/^\d{4}-\d{2}-\d{2}$/.test(f.startDate)?f.startDate:program.startDate;
+    setProgram({startDate,weeks,startWeight,goalWeight});
+    setEditing(false);
+  }
+  const lbl={fontSize:10,color:MUTED,fontFamily:FONT,letterSpacing:1,marginBottom:4};
+  const inp={width:"100%",background:"#0D1117",border:`1px solid ${BORDER}`,color:TEXT,borderRadius:6,padding:"6px 8px",fontSize:13,fontFamily:"'Barlow',sans-serif"};
+  return h("div",{style:{background:CARD,border:`1px solid ${BORDER}`,borderRadius:10,padding:"14px",marginBottom:20}},
+    h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:editing?12:6}},
+      h("div",{style:{fontFamily:FONT,fontSize:10,letterSpacing:2.5,color:MUTED}},"PROGRAM SETTINGS"),
+      h("button",{onClick:()=>{if(editing)save();else{setF(program);setEditing(true);}},style:{background:editing?ACCENT:"transparent",border:`1px solid ${editing?ACCENT:BORDER}`,color:editing?"#000":MUTED,borderRadius:6,padding:"5px 14px",cursor:"pointer",fontFamily:FONT,fontSize:11,letterSpacing:1,fontWeight:editing?800:400}},editing?"SAVE":"EDIT")
+    ),
+    editing
+      ?h("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}},
+          h("div",null,h("div",{style:lbl},"START DATE"),h("input",{type:"date",value:f.startDate,onChange:e=>setF({...f,startDate:e.target.value}),style:inp})),
+          h("div",null,h("div",{style:lbl},"LENGTH (WEEKS)"),h("input",{type:"number",value:f.weeks,onChange:e=>setF({...f,weeks:e.target.value}),style:inp})),
+          h("div",null,h("div",{style:lbl},"START WEIGHT (KG)"),h("input",{type:"number",value:f.startWeight,onChange:e=>setF({...f,startWeight:e.target.value}),style:inp})),
+          h("div",null,h("div",{style:lbl},"GOAL WEIGHT (KG)"),h("input",{type:"number",value:f.goalWeight,onChange:e=>setF({...f,goalWeight:e.target.value}),style:inp}))
+        )
+      :h("div",{style:{fontSize:11,color:MUTED}},fmtRange(program.startDate,program.weeks)+" · "+program.startWeight+"→"+program.goalWeight+"kg")
+  );
+}
+
+function ProgressScreen({history,bodyWeight,program,setProgram}){
+  const wk=getWeekNum(program.startDate);
   const volData=weeklyVolume(history);
   const maxVol=Math.max(1,...volData.map(d=>d.volume));
   const trends=exerciseTrends(history);
-  const gained=Math.max(0,bodyWeight-SEED_WEIGHT);
-  const pct=Math.min(100,Math.round((gained/6)*100));
+  const span=Math.max(1,program.goalWeight-program.startWeight);
+  const gained=Math.max(0,bodyWeight-program.startWeight);
+  const pct=Math.min(100,Math.round((gained/span)*100));
   function sparkPath(data){
     const min=Math.min(...data),max=Math.max(...data),range=max-min||1;
     const pts=data.map((v,i)=>({x:(i/(data.length-1))*100,y:100-((v-min)/range)*100}));
@@ -619,15 +710,15 @@ function ProgressScreen({history,bodyWeight}){
       h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}},
         h("div",null,h("div",{style:{fontFamily:FONT,fontSize:32,fontWeight:800,color:TEXT}},bodyWeight,h("span",{style:{fontSize:14,color:MUTED}},"kg")),h("div",{style:{fontSize:11,color:MUTED}},"Current")),
         h("div",{style:{textAlign:"center"}},h("div",{style:{fontFamily:FONT,fontSize:22,fontWeight:800,color:pct>0?ACCENT:MUTED}},pct+"%"),h("div",{style:{fontSize:10,color:MUTED}},"of goal")),
-        h("div",{style:{textAlign:"right"}},h("div",{style:{fontFamily:FONT,fontSize:32,fontWeight:800,color:ACCENT}},"75",h("span",{style:{fontSize:14,color:MUTED}},"kg")),h("div",{style:{fontSize:11,color:MUTED}},"Goal"))
+        h("div",{style:{textAlign:"right"}},h("div",{style:{fontFamily:FONT,fontSize:32,fontWeight:800,color:ACCENT}},program.goalWeight,h("span",{style:{fontSize:14,color:MUTED}},"kg")),h("div",{style:{fontSize:11,color:MUTED}},"Goal"))
       ),
       h("div",{style:{background:"#0D1117",borderRadius:6,height:10,overflow:"hidden"}},
         h("div",{style:{width:Math.max(2,pct)+"%",height:"100%",background:`linear-gradient(90deg,${ACCENT2},${ACCENT})`,borderRadius:6}})
       ),
       h("div",{style:{display:"flex",justifyContent:"space-between",marginTop:6}},
-        h("span",{style:{fontSize:10,color:MUTED,fontFamily:FONT}},"69kg start"),
-        h("span",{style:{fontSize:10,color:MUTED,fontFamily:FONT}},"Week "+Math.min(wk,26)+" / 26"),
-        h("span",{style:{fontSize:10,color:MUTED,fontFamily:FONT}},Math.max(0,75-bodyWeight).toFixed(1)+"kg to go")
+        h("span",{style:{fontSize:10,color:MUTED,fontFamily:FONT}},program.startWeight+"kg start"),
+        h("span",{style:{fontSize:10,color:MUTED,fontFamily:FONT}},"Week "+Math.min(wk,program.weeks)+" / "+program.weeks),
+        h("span",{style:{fontSize:10,color:MUTED,fontFamily:FONT}},Math.max(0,program.goalWeight-bodyWeight).toFixed(1)+"kg to go")
       )
     ),
     h("div",{style:{fontFamily:FONT,fontSize:12,letterSpacing:2.5,color:MUTED,marginBottom:12}},"WEEKLY VOLUME BY MUSCLE"),
@@ -663,7 +754,10 @@ function ProgressScreen({history,bodyWeight}){
           )
         );
       })
-    )
+    ),
+    h("div",{style:{height:14}}),
+    h(ExerciseHistory,{history}),
+    h(ProgramSettings,{program,setProgram})
   );
 }
 

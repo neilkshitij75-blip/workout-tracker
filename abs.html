@@ -436,7 +436,51 @@ function isRestDay(history) {
 let session = null;
 let timerInterval = null;
 
+// ── BEEP + VIBRATE (fires when a hold or rest timer hits zero) ────────────────
+let audioCtx = null;
+function ensureAudio() {
+  // Must be called from a user gesture (tap) to unlock audio on iOS; safe to call repeatedly.
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+  } catch (e) {}
+}
+function notifyDone() {
+  try { if (navigator.vibrate) navigator.vibrate([120, 60, 120]); } catch (e) {}
+  try {
+    ensureAudio();
+    if (!audioCtx) return;
+    const t = audioCtx.currentTime;
+    [[0, 660], [0.18, 880]].forEach(([offset, freq]) => {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.0001, t + offset);
+      gain.gain.exponentialRampToValueAtTime(0.3, t + offset + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + offset + 0.15);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(t + offset); osc.stop(t + offset + 0.16);
+    });
+  } catch (e) {}
+}
+
+// ── SCREEN WAKE LOCK (keeps the phone awake during a session) ─────────────────
+let wakeLock = null;
+async function requestWakeLock() {
+  try { if ('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen'); } catch (e) {}
+}
+function releaseWakeLock() {
+  try { if (wakeLock) { wakeLock.release(); wakeLock = null; } } catch (e) {}
+}
+document.addEventListener('visibilitychange', () => {
+  // Wake locks drop when the app is backgrounded — re-acquire on return if still in a session.
+  if (document.visibilityState === 'visible' && session && !wakeLock) requestWakeLock();
+});
+
 function startSession() {
+  ensureAudio();
+  requestWakeLock();
   session = {
     startTime: Date.now(),
     elapsed: 0,
@@ -452,6 +496,7 @@ function startSession() {
 
 function toggleSet(exIdx, setIdx) {
   if (!session) return;
+  ensureAudio();
   const wasComplete = session.sets[exIdx][setIdx];
   session.sets[exIdx][setIdx] = !wasComplete;
   if (!wasComplete) {
@@ -492,6 +537,7 @@ function startRestTimer(seconds, exIdx) {
     if (restSecs <= 0) {
       clearInterval(restInterval);
       restSecs = 0; restExIdx = null;
+      notifyDone();
     }
     renderWorkout();
   }, 1000);
@@ -509,6 +555,7 @@ let workExIdx = null;
 let workSetIdx = null;
 
 function startWorkTimer(exIdx, setIdx, targetSecs) {
+  ensureAudio();
   clearInterval(workInterval);
   workSecs = 0;
   workTarget = targetSecs;
@@ -519,6 +566,7 @@ function startWorkTimer(exIdx, setIdx, targetSecs) {
     workSecs++;
     if (workSecs >= workTarget) {
       clearInterval(workInterval);
+      notifyDone();
       // auto-complete set
       if (session) {
         session.sets[exIdx][setIdx] = true;
@@ -544,6 +592,7 @@ function finishSession() {
   clearInterval(restInterval);
   clearInterval(workInterval);
   restSecs = 0; restExIdx = null; workExIdx = null; workSetIdx = null;
+  releaseWakeLock();
   const totalSets = session.sets.flat().filter(Boolean).length;
   const duration = Math.max(1, Math.floor((Date.now() - session.startTime) / 60000));
   const d = getData();
@@ -565,6 +614,7 @@ function discardSession() {
   session = null;
   restSecs = 0; restExIdx = null;
   workExIdx = null; workSetIdx = null;
+  releaseWakeLock();
   renderWorkout();
 }
 
