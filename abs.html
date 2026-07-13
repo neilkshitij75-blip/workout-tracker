@@ -1009,6 +1009,15 @@ function renderProgress() {
     <div class="section-label">SESSION HISTORY</div>
     ${histHTML}
 
+    <div class="section-label">BACKUP & RESTORE</div>
+    <div class="card" style="margin-bottom:12px">
+      <div style="font-size:11px;color:var(--muted);margin-bottom:10px">Export your data to back it up, or import a previous backup.</div>
+      <div class="btn-row">
+        <button class="btn-outline" id="export-btn" onclick="exportData()">EXPORT</button>
+        <button class="btn-outline" onclick="showImportModal()">IMPORT</button>
+      </div>
+    </div>
+
     <div class="card" style="margin-top:8px;margin-bottom:8px;text-align:center">
       <div style="font-size:11px;color:var(--muted);margin-bottom:8px">Reset all data</div>
       <button class="btn-danger" style="padding:8px 20px;font-size:12px;border-radius:8px;width:auto" onclick="if(confirm('Delete all data? This cannot be undone.'))resetData()">RESET DATA</button>
@@ -1020,6 +1029,76 @@ function renderProgress() {
 
 function resetData() {
   try { localStorage.removeItem(SKEY); } catch(e) {}
+  renderHome(); renderProgress();
+}
+
+// ── EXPORT / IMPORT ──────────────────────────────────────────────────────────
+function exportData() {
+  const raw = localStorage.getItem(SKEY) || '{}';
+  const btn = document.getElementById('export-btn');
+  function showCopied() {
+    if (!btn) return;
+    const orig = btn.textContent;
+    btn.textContent = 'COPIED!';
+    setTimeout(() => { btn.textContent = orig; }, 2000);
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(raw).then(showCopied).catch(() => showExportFallback(raw));
+  } else {
+    showExportFallback(raw);
+  }
+}
+
+function showExportFallback(raw) {
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.id = 'export-fallback-overlay';
+  overlay.innerHTML = `
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-title">COPY YOUR DATA</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px">Clipboard unavailable — tap the box, select all, and copy manually:</div>
+      <textarea readonly id="export-fallback-text" style="width:100%;height:140px;background:#0D1117;border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:11px;padding:10px;font-family:monospace"></textarea>
+      <button class="btn-outline" style="margin-top:12px" onclick="document.getElementById('export-fallback-overlay').remove()">CLOSE</button>
+    </div>`;
+  document.body.appendChild(overlay);
+  const ta = document.getElementById('export-fallback-text');
+  ta.value = raw;
+  ta.focus(); ta.select();
+}
+
+function showImportModal() {
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.id = 'import-overlay';
+  overlay.innerHTML = `
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-title">IMPORT DATA</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px">Paste previously exported JSON. This will overwrite your current Core data on this device.</div>
+      <textarea id="import-text" placeholder="Paste here..." style="width:100%;height:140px;background:#0D1117;border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:11px;padding:10px;font-family:monospace"></textarea>
+      <div id="import-err" style="color:var(--red);font-size:11px;margin-top:6px"></div>
+      <div class="btn-row" style="margin-top:12px">
+        <button class="btn-outline" onclick="document.getElementById('import-overlay').remove()">CANCEL</button>
+        <button class="btn-primary" onclick="submitImport()">OVERWRITE & IMPORT</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+}
+
+function submitImport() {
+  const text = document.getElementById('import-text').value;
+  const errEl = document.getElementById('import-err');
+  let parsed;
+  try { parsed = JSON.parse(text); }
+  catch (e) { errEl.textContent = "That doesn't look like valid JSON."; return; }
+  if (!parsed || typeof parsed !== 'object' || !Array.isArray(parsed.history)) {
+    errEl.textContent = "This doesn't look like a Core export — missing a history list.";
+    return;
+  }
+  if (!confirm('This will overwrite your current Core data on this device. Continue?')) return;
+  localStorage.setItem(SKEY, JSON.stringify(parsed));
+  document.getElementById('import-overlay').remove();
   renderHome(); renderProgress();
 }
 

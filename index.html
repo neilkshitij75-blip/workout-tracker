@@ -440,10 +440,67 @@ function Section({label,items}){
   );
 }
 
+function DataManager({storageKey}){
+  const [toast,setToast]=useState("");
+  const [showImport,setShowImport]=useState(false);
+  const [importText,setImportText]=useState("");
+  const [importErr,setImportErr]=useState("");
+  const [fallbackText,setFallbackText]=useState(null);
+
+  function doExport(){
+    const raw=localStorage.getItem(storageKey)||"{}";
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(raw).then(()=>{
+        setToast("COPIED!");setTimeout(()=>setToast(""),2000);
+      }).catch(()=>setFallbackText(raw));
+    }else{
+      setFallbackText(raw);
+    }
+  }
+
+  function doImport(){
+    let parsed;
+    try{parsed=JSON.parse(importText);}
+    catch(e){setImportErr("That doesn't look like valid JSON.");return;}
+    if(!parsed||typeof parsed!=="object"||!Array.isArray(parsed.history)){
+      setImportErr("This doesn't look like a Trainmore export — missing a history list.");
+      return;
+    }
+    if(!confirm("This will overwrite your current Trainmore data on this device. Continue?"))return;
+    localStorage.setItem(storageKey,JSON.stringify(parsed));
+    window.location.reload();
+  }
+
+  const taStyle={width:"100%",height:110,background:"#0D1117",border:`1px solid ${BORDER}`,borderRadius:6,color:TEXT,fontSize:11,padding:8,fontFamily:"monospace",resize:"vertical"};
+
+  return h("div",{style:{background:CARD,border:`1px solid ${BORDER}`,borderRadius:10,padding:14,marginBottom:14}},
+    h("div",{style:{fontFamily:FONT,fontSize:10,letterSpacing:2.5,color:MUTED,marginBottom:10}},"BACKUP & RESTORE"),
+    h("div",{style:{display:"flex",gap:8}},
+      h("button",{onClick:doExport,style:{flex:1,background:"transparent",border:`1px solid ${ACCENT}`,color:ACCENT,borderRadius:8,padding:"10px 0",cursor:"pointer",fontFamily:FONT,fontWeight:700,fontSize:13,letterSpacing:1}},toast||"EXPORT"),
+      h("button",{onClick:()=>{setShowImport(v=>!v);setImportText("");setImportErr("");},style:{flex:1,background:"transparent",border:`1px solid ${BORDER}`,color:MUTED,borderRadius:8,padding:"10px 0",cursor:"pointer",fontFamily:FONT,fontWeight:700,fontSize:13,letterSpacing:1}},"IMPORT")
+    ),
+    fallbackText&&h("div",{style:{marginTop:10}},
+      h("div",{style:{fontSize:11,color:MUTED,marginBottom:6}},"Clipboard unavailable — tap the box, select all, and copy manually:"),
+      h("textarea",{readOnly:true,value:fallbackText,onFocus:e=>e.target.select(),style:taStyle}),
+      h("button",{onClick:()=>setFallbackText(null),style:{marginTop:6,background:"transparent",border:"none",color:MUTED,fontSize:11,cursor:"pointer"}},"Close")
+    ),
+    showImport&&h("div",{style:{marginTop:10}},
+      h("div",{style:{fontSize:11,color:MUTED,marginBottom:6}},"Paste previously exported JSON:"),
+      h("textarea",{value:importText,onChange:e=>{setImportText(e.target.value);setImportErr("");},placeholder:"Paste here...",style:taStyle}),
+      importErr&&h("div",{style:{color:"#EF4444",fontSize:11,marginTop:6}},importErr),
+      h("div",{style:{display:"flex",gap:8,marginTop:8}},
+        h("button",{onClick:()=>setShowImport(false),style:{flex:1,background:"transparent",border:`1px solid ${BORDER}`,color:MUTED,borderRadius:8,padding:"8px 0",cursor:"pointer",fontFamily:FONT,fontSize:12}},"CANCEL"),
+        h("button",{onClick:doImport,style:{flex:1,background:ACCENT,border:"none",color:"#000",borderRadius:8,padding:"8px 0",cursor:"pointer",fontFamily:FONT,fontWeight:800,fontSize:12}},"OVERWRITE & IMPORT")
+      )
+    )
+  );
+}
+
 function HistoryScreen({history,setHistory}){
   function del(id){if(confirm("Delete this session?"))setHistory(p=>p.filter(s=>s.id!==id));}
   return h("div",{style:{paddingTop:16}},
     h("div",{style:{fontFamily:FONT,fontSize:12,letterSpacing:2.5,color:MUTED,marginBottom:12}},"WORKOUT HISTORY"),
+    h(DataManager,{storageKey:STORAGE_KEY}),
     history.length===0&&h("div",{style:{color:MUTED,textAlign:"center",padding:40}},"No sessions yet. Start your first workout!"),
     history.map(s=>{
       const color=PLAN[s.name]?.color||ACCENT;
