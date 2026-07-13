@@ -395,50 +395,46 @@ function getData() {
   return d;
 }
 
-function todayStr() { return new Date().toISOString().split('T')[0]; }
-function fmtDate(iso) { return new Date(iso).toLocaleDateString('en-GB', {day:'numeric',month:'short'}); }
+// All session dates are LOCAL calendar dates (YYYY-MM-DD) so day/week boundaries match the user's clock, not UTC.
+function localISO(d) { return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function todayStr() { return localISO(new Date()); }
+function fmtDate(iso) { const p=String(iso).split('-').map(Number); return new Date(p[0],p[1]-1,p[2]).toLocaleDateString('en-GB', {day:'numeric',month:'short'}); }
 function fmtTime(s) { return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`; }
+function daysDiff(aISO,bISO) { const a=String(aISO).split('-').map(Number),b=String(bISO).split('-').map(Number); return Math.round((new Date(b[0],b[1]-1,b[2])-new Date(a[0],a[1]-1,a[2]))/86400000); }
 
+// Streak = consecutive training days, tolerating a single rest day (this program schedules rest days,
+// so taking a recommended rest day should not reset your streak).
 function calcStreak(history) {
   if (!history.length) return 0;
-  const sorted = [...history].sort((a,b) => b.date.localeCompare(a.date));
-  const unique = [...new Set(sorted.map(s => s.date))];
+  const unique = [...new Set(history.map(s => s.date))].sort((a,b) => b.localeCompare(a));
   const today = todayStr();
-  const yest = new Date(); yest.setDate(yest.getDate()-1);
-  const yISO = yest.toISOString().split('T')[0];
+  const y = new Date(); y.setDate(y.getDate()-1); const yISO = localISO(y);
   if (unique[0] !== today && unique[0] !== yISO) return 0;
-  let streak = 0;
-  let check = new Date(unique[0]);
-  for (const d of unique) {
-    if (d === check.toISOString().split('T')[0]) { streak++; check.setDate(check.getDate()-1); }
-    else break;
+  let streak = 1;
+  for (let i=1; i<unique.length; i++) {
+    const gap = daysDiff(unique[i], unique[i-1]);
+    if (gap <= 2) streak++; else break;
   }
   return streak;
 }
 
 function isRestDay(history) {
-  // Recommend rest if trained 3+ days in a row
-  const sorted = [...history].sort((a,b) => b.date.localeCompare(a.date));
-  const unique = [...new Set(sorted.map(s => s.date))];
+  // Recommend rest after 3 consecutive training days (only if the run reaches up to today or yesterday).
+  const unique = [...new Set(history.map(s => s.date))].sort((a,b) => b.localeCompare(a));
   if (unique.length < 3) return false;
-  // Check if last 3 sessions were consecutive
-  let consec = 0;
-  let check = new Date(todayStr()); check.setDate(check.getDate()-1);
-  for (const d of unique) {
-    if (d === check.toISOString().split('T')[0]) { consec++; check.setDate(check.getDate()-1); }
-    else break;
+  const today = todayStr();
+  const y = new Date(); y.setDate(y.getDate()-1); const yISO = localISO(y);
+  if (unique[0] !== today && unique[0] !== yISO) return false;
+  let consec = 1;
+  for (let i=1; i<unique.length; i++) {
+    if (daysDiff(unique[i], unique[i-1]) === 1) consec++; else break;
   }
-  return consec >= 2;
+  return consec >= 3;
 }
 
 // ── WORKOUT SESSION STATE ───────────────────────────────────────────────────
 let session = null;
 let timerInterval = null;
-let workTimerInterval = null;
-let restTimerSeconds = 0;
-let workTimerSeconds = 0;
-let workTimerTarget = 0;
-let activeWorkTimer = null; // {exIdx, setIdx}
 
 function startSession() {
   session = {
@@ -547,6 +543,10 @@ function stopWorkTimer() {
 function finishSession() {
   if (!session) return;
   clearInterval(timerInterval);
+  clearInterval(restInterval);
+  clearInterval(workInterval);
+  restSecs = 0; workExIdx = null; workSetIdx = null;
+  hideRestBanner(); hideWorkBanner();
   const totalSets = session.sets.flat().filter(Boolean).length;
   const duration = Math.max(1, Math.floor((Date.now() - session.startTime) / 60000));
   const d = getData();
@@ -559,7 +559,6 @@ function finishSession() {
   saveData(d);
   showComplete(totalSets, duration);
   session = null;
-  clearInterval(timerInterval);
 }
 
 function discardSession() {
@@ -590,9 +589,10 @@ function renderRestBanner(secs) {
       <button class="rest-skip" onclick="skipRest()">SKIP</button>
     </div>`;
     const wpage = document.getElementById('page-workout');
-    const firstCard = wpage.querySelector('.ex-card');
-    if (firstCard) wpage.insertBefore(el, firstCard);
-    else wpage.appendChild(el);
+    const wrap = wpage.querySelector('div') || wpage;
+    const firstCard = wrap.querySelector('.ex-card');
+    if (firstCard) wrap.insertBefore(el, firstCard);
+    else wrap.appendChild(el);
   }
   document.getElementById('rest-cd').textContent = fmtTime(secs);
 }
@@ -618,9 +618,10 @@ function renderWorkBanner(secs, target) {
     </div>
     <div class="timer-progress"><div class="timer-fill" id="work-fill"></div></div>`;
     const wpage = document.getElementById('page-workout');
-    const firstCard = wpage.querySelector('.ex-card');
-    if (firstCard) wpage.insertBefore(el, firstCard);
-    else wpage.appendChild(el);
+    const wrap = wpage.querySelector('div') || wpage;
+    const firstCard = wrap.querySelector('.ex-card');
+    if (firstCard) wrap.insertBefore(el, firstCard);
+    else wrap.appendChild(el);
   }
   const pct = Math.min(100, (secs / target) * 100);
   const remaining = target - secs;
@@ -694,7 +695,7 @@ function renderHome() {
   const weekGridHTML = days.map((day,i) => {
     const cellDate = new Date(mon);
     cellDate.setDate(mon.getDate() + i);
-    const dateStr = cellDate.toISOString().split('T')[0];
+    const dateStr = localISO(cellDate);
     const isToday = i === (dow===0?6:dow-1);
     const isDone = sessionDates.has(dateStr);
     const isFuture = cellDate > today;
@@ -713,7 +714,7 @@ function renderHome() {
   const html = `
     <div class="quote-card">
       <div class="quote-accent">"</div>
-      <div class="quote-week">WEEK ${wk+1} · CORE PROGRAM</div>
+      <div class="quote-week">WEEK ${Math.min(wk+1,26)} · CORE PROGRAM</div>
       <div class="quote-text">"${quote.text}"</div>
       <div class="quote-author">— ${quote.attr}</div>
     </div>
@@ -779,7 +780,7 @@ function renderHome() {
             <div style="font-size:11px;color:var(--muted);margin-top:3px">${ex.muscle}</div>
           </div>
           <div style="text-align:right">
-            <div style="font-family:var(--font-display);font-size:13px;color:var(--text)">${ex.sets} × ${ex.type==='reps'?ex.reps+'reps'+(ex.per_side?' each':''):ex.duration+'s'}</div>
+            <div style="font-family:var(--font-display);font-size:13px;color:var(--text)">${ex.sets} × ${ex.type==='reps'?ex.reps+' reps'+(ex.per_side?' each':''):ex.duration+'s'}</div>
             <span style="font-family:var(--font-display);font-size:9px;padding:2px 7px;border-radius:4px;background:${ex.diffColor}18;color:${ex.diffColor};border:1px solid ${ex.diffColor}30">${ex.difficulty}</span>
           </div>
         </div>

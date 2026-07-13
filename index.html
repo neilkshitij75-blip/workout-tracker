@@ -87,25 +87,30 @@ const SEED_HISTORY=[
 ];
 const SEED_PRS=[{exercise:"Weighted Dips",weight:"+30kg",reps:8,date:"Apr 14"},{exercise:"Seated Cable Row",weight:"35kg",reps:10,date:"Apr 16"},{exercise:"Leg Press",weight:"60kg",reps:12,date:"Apr 18"}];
 const SEED_WEIGHT=69;
-const WEEKLY_VOL=[{muscle:"Legs",volume:11200,color:"#10B981"},{muscle:"Chest",volume:8400,color:"#FF6B35"},{muscle:"Back",volume:7200,color:"#8B5CF6"},{muscle:"Shoulders",volume:4800,color:"#00BFFF"},{muscle:"Triceps",volume:4200,color:"#EF4444"},{muscle:"Biceps",volume:3600,color:"#F59E0B"}];
-const SPARK={"Bench Press":[20,20,21,22.5,22.5,23,24],"Leg Press":[50,55,55,60,60,62.5,65],"Cable Row":[30,32.5,35,35,37.5,37.5,40],"Incline DB":[16,16,17,18,18,19,20]};
+const MGROUP={"Upper Chest":"Chest","Chest":"Chest","Chest/Triceps":"Chest","Shoulders":"Shoulders","Side Delts":"Shoulders","Front Delts":"Shoulders","Rear Delts":"Shoulders","Back":"Back","Lats":"Back","Mid Back":"Back","Quads":"Legs","Hamstrings":"Legs","Glutes":"Legs","Calves":"Legs","Biceps":"Biceps","Triceps":"Triceps"};
+const GROUPCOLOR={Chest:"#FF6B35",Back:"#8B5CF6",Shoulders:"#00BFFF",Legs:"#10B981",Biceps:"#F59E0B",Triceps:"#EF4444",Other:"#6B7A94"};
 
 function getWeekNum(){const start=new Date("2025-04-26");return Math.max(0,Math.floor((new Date()-start)/(7*24*60*60*1000)));}
 function fmtTime(s){return`${String(Math.floor(s/60)).padStart(2,"0")}:${String(s%60).padStart(2,"0")}`}
-function fmtDate(iso){return new Date(iso).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});}
-function todayISO(){return new Date().toISOString().split("T")[0];}
+// All session dates are LOCAL calendar dates (YYYY-MM-DD) so day/week boundaries match the user's clock, not UTC.
+function localISO(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+function fmtDate(iso){const p=String(iso).split("-").map(Number);return new Date(p[0],p[1]-1,p[2]).toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});}
+function fmtShort(iso){const p=String(iso).split("-").map(Number);return new Date(p[0],p[1]-1,p[2]).toLocaleDateString("en-GB",{day:"numeric",month:"short"});}
+function todayISO(){return localISO(new Date());}
+function daysDiff(aISO,bISO){const a=String(aISO).split("-").map(Number),b=String(bISO).split("-").map(Number);return Math.round((new Date(b[0],b[1]-1,b[2])-new Date(a[0],a[1]-1,a[2]))/86400000);}
 
+// Streak = consecutive training days, tolerating a single rest day between sessions
+// (this is a rest-day-aware program, so one day off should not reset your streak).
 function calcStreak(history){
   if(!history.length)return 0;
-  const sorted=[...history].sort((a,b)=>new Date(b.date)-new Date(a.date));
-  const unique=[...new Set(sorted.map(s=>s.date))];
+  const unique=[...new Set(history.map(s=>s.date))].sort((a,b)=>b.localeCompare(a));
   const today=todayISO();
-  const yest=new Date();yest.setDate(yest.getDate()-1);
-  const yISO=yest.toISOString().split("T")[0];
+  const y=new Date();y.setDate(y.getDate()-1);const yISO=localISO(y);
   if(unique[0]!==today&&unique[0]!==yISO)return 0;
-  let streak=0,check=new Date(unique[0]);
-  for(const d of unique){
-    if(d===check.toISOString().split("T")[0]){streak++;check.setDate(check.getDate()-1);}else break;
+  let streak=1;
+  for(let i=1;i<unique.length;i++){
+    const gap=daysDiff(unique[i],unique[i-1]);
+    if(gap<=2)streak++;else break;
   }
   return streak;
 }
@@ -143,7 +148,49 @@ function getNextDay(history){
 }
 function getDaysSince(history){
   if(!history.length)return null;
-  return Math.floor((new Date()-new Date(history[0].date))/(24*60*60*1000));
+  return daysDiff(history[0].date,todayISO());
+}
+
+// Most recent actually-logged top set (by weight, then reps) for an exercise. Powers the PREV column.
+function lastLoggedTop(history,exName){
+  for(const hh of history){
+    const sets=hh.logged&&hh.logged[exName];
+    if(sets&&sets.length){
+      let best=null;
+      sets.forEach(s=>{const w=parseFloat(s.weight)||0,r=parseInt(s.reps)||0;if(!best||w>best.w||(w===best.w&&r>best.r))best={w,r};});
+      if(best&&(best.w>0||best.r>0))return best;
+    }
+  }
+  return null;
+}
+
+// Real weekly training volume (kg lifted = weight × reps) grouped by muscle, this week only.
+function weeklyVolume(history){
+  const now=new Date(),mon=new Date(now);mon.setDate(now.getDate()-(now.getDay()===0?6:now.getDay()-1));mon.setHours(0,0,0,0);
+  const monISO=localISO(mon),today=todayISO();const vol={};
+  history.forEach(hh=>{
+    if(hh.date<monISO||hh.date>today||!hh.logged)return;
+    const plan=PLAN[hh.name];
+    Object.entries(hh.logged).forEach(([ex,sets])=>{
+      const exDef=plan?plan.exercises.find(e=>e.name===ex):null;
+      const grp=MGROUP[exDef&&exDef.muscle]||"Other";
+      sets.forEach(s=>{vol[grp]=(vol[grp]||0)+(parseFloat(s.weight)||0)*(parseInt(s.reps)||0);});
+    });
+  });
+  return Object.entries(vol).filter(([,v])=>v>0).map(([muscle,volume])=>({muscle,volume,color:GROUPCOLOR[muscle]||ACCENT})).sort((a,b)=>b.volume-a.volume);
+}
+
+// Real per-exercise top-set weight trend (chronological), for lifts logged in 2+ sessions.
+function exerciseTrends(history){
+  const map={};
+  [...history].reverse().forEach(hh=>{
+    if(!hh.logged)return;
+    Object.entries(hh.logged).forEach(([ex,sets])=>{
+      let w=0;sets.forEach(s=>{const v=parseFloat(s.weight)||0;if(v>w)w=v;});
+      if(w>0)(map[ex]=map[ex]||[]).push(w);
+    });
+  });
+  return Object.entries(map).filter(([,a])=>a.length>=2).slice(0,4).map(([name,data])=>({name,data}));
 }
 
 function App(){
@@ -173,6 +220,7 @@ function App(){
   const cancelW=()=>setPendingDay(null);
   const confirmW=()=>{
     const day=pendingDay;setPendingDay(null);
+    if(running&&activeW&&!confirm("A workout is already in progress. Start a new one and discard the current session?"))return;
     const sets={};PLAN[day].exercises.forEach(ex=>{sets[ex.name]=[{weight:"",reps:"",done:false}];});
     setWSets(sets);setActiveW(day);setElapsed(0);setRunning(true);setTab("workout");
   };
@@ -180,18 +228,40 @@ function App(){
   function updateSet(ex,idx,f,v){setWSets(p=>{const u=[...p[ex]];u[idx]={...u[idx],[f]:v};return{...p,[ex]:u};});}
   function addSet(ex){setWSets(p=>({...p,[ex]:[...p[ex],{weight:"",reps:"",done:false}]}));}
   function finishW(){
+    const today=todayISO();
+    // Capture the actual weight/reps of every completed set (this used to be discarded).
+    const logged={};
+    Object.entries(wSets).forEach(([ex,sets])=>{
+      const done=sets.filter(x=>x.done&&(x.weight!==""||x.reps!==""));
+      if(done.length)logged[ex]=done.map(s=>({weight:s.weight,reps:s.reps}));
+    });
     const totalSets=Object.values(wSets).reduce((a,s)=>a+s.filter(x=>x.done).length,0);
-    setHistory(p=>[{id:Date.now(),name:activeW,date:todayISO(),duration:Math.max(1,Math.floor(elapsed/60)),sets:totalSets,exercises:Object.keys(wSets),prs:[]},...p]);
+    // Real PR detection: best set per exercise vs the stored record.
+    const prMap={};prs.forEach(p=>{prMap[p.exercise]=p;});
+    const hitPRs=[];
+    Object.entries(logged).forEach(([ex,sets])=>{
+      let best=null;
+      sets.forEach(s=>{const w=parseFloat(s.weight)||0,r=parseInt(s.reps)||0;if(!best||w>best.w||(w===best.w&&r>best.r))best={w,r};});
+      if(!best||(best.w<=0&&best.r<=0))return;
+      const cur=prMap[ex];const cw=cur?parseFloat(cur.weight)||0:0,cr=cur?cur.reps||0:0;
+      if(best.w>cw||(best.w===cw&&best.r>cr)){
+        prMap[ex]={exercise:ex,weight:best.w+"kg",reps:best.r,date:fmtShort(today),dateISO:today};
+        hitPRs.push(ex);
+      }
+    });
+    if(hitPRs.length)setPrsRaw(Object.values(prMap));
+    setHistory(p=>[{id:Date.now(),name:activeW,date:today,duration:Math.max(1,Math.floor(elapsed/60)),sets:totalSets,exercises:Object.keys(wSets),prs:hitPRs,logged},...p]);
     setActiveW(null);setRunning(false);setElapsed(0);setTab("history");
   }
   function discardW(){setActiveW(null);setRunning(false);setElapsed(0);setTab("dashboard");}
 
   const streak=calcStreak(history);
-  const thisWeek=history.filter(s=>{
-    const d=new Date(s.date),now=new Date(),mon=new Date(now);
+  const thisWeek=(()=>{
+    const now=new Date(),mon=new Date(now);
     mon.setDate(now.getDate()-(now.getDay()===0?6:now.getDay()-1));mon.setHours(0,0,0,0);
-    return d>=mon;
-  }).length;
+    const monISO=localISO(mon),today=todayISO();
+    return [...new Set(history.map(s=>s.date))].filter(dt=>dt>=monISO&&dt<=today).length;
+  })();
 
   const NAV=[{id:"dashboard",label:"HOME",icon:"⌂"},{id:"workout",label:"WORKOUT",icon:"▷"},{id:"history",label:"HISTORY",icon:"≡"},{id:"progress",label:"PROGRESS",icon:"◈"}];
 
@@ -217,7 +287,7 @@ function App(){
     ),
     h("div",{style:{maxWidth:640,margin:"0 auto",padding:"0 12px"}},
       tab==="dashboard"&&h(Dashboard,{history,prs,streak,thisWeek,pendingDay,onRequest:requestW,onConfirm:confirmW,onCancel:cancelW,bodyWeight,setBodyWeight}),
-      tab==="workout"&&h(WorkoutScreen,{activeW,wSets,onToggle:toggleSet,onUpdate:updateSet,onAdd:addSet,onFinish:finishW,onDiscard:discardW,pendingDay,onRequest:requestW,onConfirm:confirmW,onCancel:cancelW,elapsed,running}),
+      tab==="workout"&&h(WorkoutScreen,{activeW,wSets,onToggle:toggleSet,onUpdate:updateSet,onAdd:addSet,onFinish:finishW,onDiscard:discardW,pendingDay,onRequest:requestW,onConfirm:confirmW,onCancel:cancelW,elapsed,running,history}),
       tab==="history"&&h(HistoryScreen,{history,setHistory}),
       tab==="progress"&&h(ProgressScreen,{history,bodyWeight})
     ),
@@ -242,7 +312,7 @@ function WeeklyQuote(){
   const q=QUOTES[getWeekNum()%QUOTES.length];
   return h("div",{style:{background:CARD,border:`1px solid ${BORDER}`,borderLeft:`3px solid ${ACCENT}`,borderRadius:10,padding:"14px 16px",marginBottom:12,position:"relative",overflow:"hidden"}},
     h("div",{style:{position:"absolute",top:0,right:0,width:80,height:"100%",background:`linear-gradient(90deg,transparent,${ACCENT}08)`,pointerEvents:"none"}}),
-    h("div",{style:{fontFamily:FONT,fontSize:9,letterSpacing:2.5,color:ACCENT,marginBottom:8}},"WEEK "+(getWeekNum()+1)+" · APR 26 – OCT 26"),
+    h("div",{style:{fontFamily:FONT,fontSize:9,letterSpacing:2.5,color:ACCENT,marginBottom:8}},"WEEK "+Math.min(getWeekNum()+1,26)+" · APR 26 – OCT 26"),
     h("div",{style:{fontFamily:FONT,fontSize:17,fontWeight:700,color:TEXT,lineHeight:1.35}},"\u201C",q.text,"\u201D"),
     h("div",{style:{fontSize:11,color:MUTED,marginTop:8}},"\u2014 ",q.attr)
   );
@@ -278,8 +348,9 @@ function ThisWeekCard({history}){
   const days=["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
   const today=new Date(),dow=today.getDay();
   const monday=new Date(today);monday.setDate(today.getDate()-(dow===0?6:dow-1));monday.setHours(0,0,0,0);
+  const monISO=localISO(monday),todayStr=todayISO();
   const sessionDows=new Set();
-  history.forEach(s=>{const d=new Date(s.date);if(d>=monday&&d<=today){const sd=d.getDay();sessionDows.add(sd===0?6:sd-1);}});
+  history.forEach(s=>{if(s.date>=monISO&&s.date<=todayStr){const p=s.date.split("-").map(Number);const sd=new Date(p[0],p[1]-1,p[2]).getDay();sessionDows.add(sd===0?6:sd-1);}});
   const todayDow=dow===0?6:dow-1;
   return h("div",{style:{background:CARD,border:`1px solid ${BORDER}`,borderRadius:10,padding:"14px 16px",marginBottom:10}},
     h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:12}},
@@ -370,7 +441,7 @@ function Dashboard({history,prs,streak,thisWeek,pendingDay,onRequest,onConfirm,o
     h(BodyWeightInput,{bodyWeight,setBodyWeight}),
     h(MuscleBalanceCard,{history}),
     h("div",{style:{fontFamily:FONT,fontSize:10,letterSpacing:2.5,color:MUTED,marginBottom:10,marginTop:4}},"TOP RECORDS"),
-    prs.map((pr,i)=>h("div",{key:i,style:{background:CARD,border:`1px solid ${BORDER}`,borderRadius:10,padding:"12px 14px",display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}},
+    [...prs].sort((a,b)=>(b.dateISO||"").localeCompare(a.dateISO||"")).slice(0,6).map((pr,i)=>h("div",{key:i,style:{background:CARD,border:`1px solid ${BORDER}`,borderRadius:10,padding:"12px 14px",display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}},
       h("div",null,
         h("div",{style:{fontFamily:FONT,fontSize:15,fontWeight:700,color:TEXT,letterSpacing:0.5}},pr.exercise.toUpperCase()),
         h("div",{style:{fontSize:11,color:MUTED,marginTop:2}},pr.date)
@@ -383,7 +454,7 @@ function Dashboard({history,prs,streak,thisWeek,pendingDay,onRequest,onConfirm,o
   );
 }
 
-function WorkoutScreen({activeW,wSets,onToggle,onUpdate,onAdd,onFinish,onDiscard,pendingDay,onRequest,onConfirm,onCancel,elapsed,running}){
+function WorkoutScreen({activeW,wSets,onToggle,onUpdate,onAdd,onFinish,onDiscard,pendingDay,onRequest,onConfirm,onCancel,elapsed,running,history}){
   const today=new Date().toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"});
   if(!activeW)return h("div",{style:{paddingTop:20}},
     h("div",{style:{fontFamily:FONT,fontSize:12,letterSpacing:2.5,color:MUTED,marginBottom:12}},"START A SESSION"),
@@ -405,6 +476,7 @@ function WorkoutScreen({activeW,wSets,onToggle,onUpdate,onAdd,onFinish,onDiscard
     Object.keys(wSets).map(exName=>{
       const exData=PLAN[activeW].exercises.find(e=>e.name===exName);
       const sets=wSets[exName];const mc=MCOLORS[exData?.muscle]||ACCENT;
+      const lp=lastLoggedTop(history,exName);const prevStr=lp?`${lp.w}kg × ${lp.r}`:(exData?.prev||"—");
       return h("div",{key:exName,style:{background:CARD,border:`1px solid ${BORDER}`,borderRadius:10,padding:"12px",marginBottom:10}},
         h("div",{style:{marginBottom:10}},
           h("div",{style:{fontFamily:FONT,fontSize:15,fontWeight:800,color:TEXT}},exName.toUpperCase()),
@@ -415,7 +487,7 @@ function WorkoutScreen({activeW,wSets,onToggle,onUpdate,onAdd,onFinish,onDiscard
         ),
         sets.map((set,idx)=>h("div",{key:idx,style:{display:"grid",gridTemplateColumns:"22px 1fr 62px 52px 28px",gap:5,marginBottom:5,padding:"3px 0",borderRadius:6,background:set.done?"rgba(34,197,94,0.07)":"transparent"}},
           h("div",{style:{fontFamily:FONT,fontSize:14,fontWeight:700,color:set.done?GREEN:MUTED,alignSelf:"center"}},idx+1),
-          h("div",{style:{fontSize:11,color:MUTED,alignSelf:"center"}},idx===0?exData?.prev||"—":"—"),
+          h("div",{style:{fontSize:11,color:MUTED,alignSelf:"center"}},idx===0?prevStr:"—"),
           h("input",{type:"number",placeholder:"0",value:set.weight,onChange:e=>onUpdate(exName,idx,"weight",e.target.value),style:{borderColor:set.done?"rgba(34,197,94,0.4)":"#1E2530"}}),
           h("input",{type:"number",placeholder:"0",value:set.reps,onChange:e=>onUpdate(exName,idx,"reps",e.target.value),style:{borderColor:set.done?"rgba(34,197,94,0.4)":"#1E2530"}}),
           h("button",{className:`check-btn${set.done?" done":""}`,onClick:()=>onToggle(exName,idx)},set.done&&h("span",{style:{color:"#fff",fontSize:11,fontWeight:700}},"✓"))
@@ -530,8 +602,10 @@ function HistoryScreen({history,setHistory}){
 }
 
 function ProgressScreen({history,bodyWeight}){
-  const maxVol=Math.max(...WEEKLY_VOL.map(d=>d.volume));
   const wk=getWeekNum();
+  const volData=weeklyVolume(history);
+  const maxVol=Math.max(1,...volData.map(d=>d.volume));
+  const trends=exerciseTrends(history);
   const gained=Math.max(0,bodyWeight-SEED_WEIGHT);
   const pct=Math.min(100,Math.round((gained/6)*100));
   function sparkPath(data){
@@ -552,13 +626,13 @@ function ProgressScreen({history,bodyWeight}){
       ),
       h("div",{style:{display:"flex",justifyContent:"space-between",marginTop:6}},
         h("span",{style:{fontSize:10,color:MUTED,fontFamily:FONT}},"69kg start"),
-        h("span",{style:{fontSize:10,color:MUTED,fontFamily:FONT}},"Week "+wk+" / 26"),
+        h("span",{style:{fontSize:10,color:MUTED,fontFamily:FONT}},"Week "+Math.min(wk,26)+" / 26"),
         h("span",{style:{fontSize:10,color:MUTED,fontFamily:FONT}},Math.max(0,75-bodyWeight).toFixed(1)+"kg to go")
       )
     ),
     h("div",{style:{fontFamily:FONT,fontSize:12,letterSpacing:2.5,color:MUTED,marginBottom:12}},"WEEKLY VOLUME BY MUSCLE"),
     h("div",{style:{background:CARD,border:`1px solid ${BORDER}`,borderRadius:10,padding:"14px",marginBottom:14}},
-      WEEKLY_VOL.map(({muscle,volume,color})=>h("div",{key:muscle,style:{marginBottom:10}},
+      volData.length?volData.map(({muscle,volume,color})=>h("div",{key:muscle,style:{marginBottom:10}},
         h("div",{style:{display:"flex",justifyContent:"space-between",marginBottom:4}},
           h("div",{style:{fontFamily:FONT,fontSize:13,color:TEXT}},muscle.toUpperCase()),
           h("div",{style:{fontSize:11,color:MUTED}},(volume/1000).toFixed(1)+"k kg")
@@ -566,11 +640,13 @@ function ProgressScreen({history,bodyWeight}){
         h("div",{style:{background:"#0D1117",borderRadius:4,height:8,overflow:"hidden"}},
           h("div",{style:{width:((volume/maxVol)*100)+"%",height:"100%",background:color,borderRadius:4}})
         )
-      ))
+      )):h("div",{style:{fontSize:12,color:MUTED,textAlign:"center",padding:"8px 0"}},"Log a workout with weights this week to see volume.")
     ),
     h("div",{style:{fontFamily:FONT,fontSize:12,letterSpacing:2.5,color:MUTED,marginBottom:12}},"EXERCISE TRENDS"),
-    h("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}},
-      Object.entries(SPARK).map(([name,data])=>{
+    trends.length===0
+      ?h("div",{style:{background:CARD,border:`1px solid ${BORDER}`,borderRadius:10,padding:"14px",fontSize:12,color:MUTED,textAlign:"center"}},"Log the same lift in 2+ sessions to see a trend.")
+      :h("div",{style:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}},
+      trends.map(({name,data})=>{
         const{pts,d}=sparkPath(data);const cur=data[data.length-1],prev=data[data.length-2];
         const up=cur>=prev;const uid="g"+name.replace(/\s/g,"");
         return h("div",{key:name,style:{background:CARD,border:`1px solid ${BORDER}`,borderRadius:10,padding:"12px"}},
