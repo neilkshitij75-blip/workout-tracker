@@ -438,30 +438,47 @@ let timerInterval = null;
 
 // ── BEEP + VIBRATE (fires when a hold or rest timer hits zero) ────────────────
 let audioCtx = null;
+let audioUnlocked = false;
 function ensureAudio() {
   // Must be called from a user gesture (tap) to unlock audio on iOS; safe to call repeatedly.
   try {
     if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     if (audioCtx.state === 'suspended') audioCtx.resume();
+    if (!audioUnlocked) {
+      // Play one silent sample inside the gesture — iOS needs this to fully unlock later playback.
+      const b = audioCtx.createBuffer(1, 1, 22050);
+      const s = audioCtx.createBufferSource();
+      s.buffer = b; s.connect(audioCtx.destination); s.start(0);
+      audioUnlocked = true;
+    }
   } catch (e) {}
 }
-function notifyDone() {
-  try { if (navigator.vibrate) navigator.vibrate([120, 60, 120]); } catch (e) {}
+function playBeep() {
   try {
-    ensureAudio();
     if (!audioCtx) return;
     const t = audioCtx.currentTime;
-    [[0, 660], [0.18, 880]].forEach(([offset, freq]) => {
+    // Three rising tones, loud and clear.
+    [[0, 784], [0.16, 988], [0.32, 1319]].forEach(([offset, freq]) => {
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
       osc.type = 'sine';
       osc.frequency.value = freq;
       gain.gain.setValueAtTime(0.0001, t + offset);
-      gain.gain.exponentialRampToValueAtTime(0.3, t + offset + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.0001, t + offset + 0.15);
+      gain.gain.exponentialRampToValueAtTime(0.5, t + offset + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + offset + 0.2);
       osc.connect(gain); gain.connect(audioCtx.destination);
-      osc.start(t + offset); osc.stop(t + offset + 0.16);
+      osc.start(t + offset); osc.stop(t + offset + 0.22);
     });
+  } catch (e) {}
+}
+function notifyDone() {
+  try { if (navigator.vibrate) navigator.vibrate([200, 100, 200]); } catch (e) {}
+  try {
+    ensureAudio();
+    if (!audioCtx) return;
+    // The context can be suspended when the timer fires — resume first, then play, to avoid a silent beep.
+    if (audioCtx.state === 'suspended') audioCtx.resume().then(playBeep).catch(function(){});
+    else playBeep();
   } catch (e) {}
 }
 
