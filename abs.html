@@ -457,7 +457,7 @@ function toggleSet(exIdx, setIdx) {
   if (!wasComplete) {
     // set just completed — check if we should start rest timer
     const ex = EXERCISES[exIdx];
-    startRestTimer(ex.rest);
+    startRestTimer(ex.rest, exIdx);
     // update PRs
     updatePR(ex, setIdx);
   }
@@ -481,25 +481,25 @@ function updatePR(ex, setIdx) {
 
 let restSecs = 0;
 let restInterval = null;
-function startRestTimer(seconds) {
+let restExIdx = null;   // which exercise the rest timer belongs to, so it renders inline there
+function startRestTimer(seconds, exIdx) {
   clearInterval(restInterval);
   restSecs = seconds;
-  renderRestBanner(restSecs);
+  restExIdx = (exIdx === undefined ? null : exIdx);
+  renderWorkout();
   restInterval = setInterval(() => {
     restSecs--;
     if (restSecs <= 0) {
       clearInterval(restInterval);
-      restSecs = 0;
-      hideRestBanner();
-    } else {
-      renderRestBanner(restSecs);
+      restSecs = 0; restExIdx = null;
     }
+    renderWorkout();
   }, 1000);
 }
 function skipRest() {
   clearInterval(restInterval);
-  restSecs = 0;
-  hideRestBanner();
+  restSecs = 0; restExIdx = null;
+  renderWorkout();
 }
 
 let workSecs = 0;
@@ -514,7 +514,7 @@ function startWorkTimer(exIdx, setIdx, targetSecs) {
   workTarget = targetSecs;
   workExIdx = exIdx;
   workSetIdx = setIdx;
-  renderWorkBanner(workSecs, workTarget);
+  renderWorkout();
   workInterval = setInterval(() => {
     workSecs++;
     if (workSecs >= workTarget) {
@@ -523,20 +523,18 @@ function startWorkTimer(exIdx, setIdx, targetSecs) {
       if (session) {
         session.sets[exIdx][setIdx] = true;
         updatePR(EXERCISES[exIdx], setIdx);
-        startRestTimer(EXERCISES[exIdx].rest);
+        startRestTimer(EXERCISES[exIdx].rest, exIdx);
       }
       workExIdx = null; workSetIdx = null;
-      hideWorkBanner();
       renderWorkout();
     } else {
-      renderWorkBanner(workSecs, workTarget);
+      renderWorkout();
     }
   }, 1000);
 }
 function stopWorkTimer() {
   clearInterval(workInterval);
   workExIdx = null; workSetIdx = null;
-  hideWorkBanner();
   renderWorkout();
 }
 
@@ -545,8 +543,7 @@ function finishSession() {
   clearInterval(timerInterval);
   clearInterval(restInterval);
   clearInterval(workInterval);
-  restSecs = 0; workExIdx = null; workSetIdx = null;
-  hideRestBanner(); hideWorkBanner();
+  restSecs = 0; restExIdx = null; workExIdx = null; workSetIdx = null;
   const totalSets = session.sets.flat().filter(Boolean).length;
   const duration = Math.max(1, Math.floor((Date.now() - session.startTime) / 60000));
   const d = getData();
@@ -566,74 +563,43 @@ function discardSession() {
   clearInterval(restInterval);
   clearInterval(workInterval);
   session = null;
-  restSecs = 0;
+  restSecs = 0; restExIdx = null;
   workExIdx = null; workSetIdx = null;
   renderWorkout();
 }
 
 // ── RENDER HELPERS ──────────────────────────────────────────────────────────
 let expandedEx = null;
+let lastScrollTarget = null;
 
-function renderRestBanner(secs) {
-  let el = document.getElementById('rest-banner');
-  if (!el) {
-    el = document.createElement('div');
-    el.id = 'rest-banner';
-    el.className = 'rest-banner';
-    el.innerHTML = `<div>
-      <div class="rest-title">REST</div>
-      <div style="font-size:11px;color:var(--muted);margin-top:2px">Stay loose, breathe</div>
-    </div>
-    <div style="display:flex;align-items:center;gap:10px">
-      <div class="rest-countdown" id="rest-cd"></div>
-      <button class="rest-skip" onclick="skipRest()">SKIP</button>
+// Builds the inline hold/rest timer strip that renders inside the exercise the user is working,
+// right above its set rows — so the countdown appears where the START button is, no scrolling.
+function timerStripFor(exIdx) {
+  let html = '';
+  if (workExIdx === exIdx) {
+    const remaining = Math.max(0, workTarget - workSecs);
+    const wpct = Math.min(100, (workSecs / workTarget) * 100);
+    html += `<div class="work-banner" style="margin-bottom:10px">
+      <div class="work-top">
+        <div><div class="work-title">HOLD</div><div style="font-size:11px;color:var(--muted);margin-top:2px">Hold steady — breathe</div></div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div class="work-timer">${fmtTime(remaining)}</div>
+          <button class="work-stop" onclick="stopWorkTimer()">STOP</button>
+        </div>
+      </div>
+      <div class="timer-progress"><div class="timer-fill" style="width:${wpct}%"></div></div>
     </div>`;
-    const wpage = document.getElementById('page-workout');
-    const wrap = wpage.querySelector('div') || wpage;
-    const firstCard = wrap.querySelector('.ex-card');
-    if (firstCard) wrap.insertBefore(el, firstCard);
-    else wrap.appendChild(el);
   }
-  document.getElementById('rest-cd').textContent = fmtTime(secs);
-}
-function hideRestBanner() {
-  const el = document.getElementById('rest-banner');
-  if (el) el.remove();
-}
-function renderWorkBanner(secs, target) {
-  let el = document.getElementById('work-banner');
-  if (!el) {
-    el = document.createElement('div');
-    el.id = 'work-banner';
-    el.className = 'work-banner';
-    el.innerHTML = `<div class="work-top">
-      <div>
-        <div class="work-title">HOLD</div>
-        <div id="work-ex-name" style="font-size:11px;color:var(--muted);margin-top:2px"></div>
-      </div>
+  if (restSecs > 0 && restExIdx === exIdx) {
+    html += `<div class="rest-banner" style="margin-bottom:10px">
+      <div><div class="rest-title">REST</div><div style="font-size:11px;color:var(--muted);margin-top:2px">Stay loose, breathe</div></div>
       <div style="display:flex;align-items:center;gap:10px">
-        <div class="work-timer" id="work-cd"></div>
-        <button class="work-stop" onclick="stopWorkTimer()">STOP</button>
+        <div class="rest-countdown">${fmtTime(restSecs)}</div>
+        <button class="rest-skip" onclick="skipRest()">SKIP</button>
       </div>
-    </div>
-    <div class="timer-progress"><div class="timer-fill" id="work-fill"></div></div>`;
-    const wpage = document.getElementById('page-workout');
-    const wrap = wpage.querySelector('div') || wpage;
-    const firstCard = wrap.querySelector('.ex-card');
-    if (firstCard) wrap.insertBefore(el, firstCard);
-    else wrap.appendChild(el);
+    </div>`;
   }
-  const pct = Math.min(100, (secs / target) * 100);
-  const remaining = target - secs;
-  document.getElementById('work-cd').textContent = fmtTime(remaining);
-  document.getElementById('work-fill').style.width = pct + '%';
-  if (workExIdx !== null) {
-    document.getElementById('work-ex-name').textContent = EXERCISES[workExIdx].name;
-  }
-}
-function hideWorkBanner() {
-  const el = document.getElementById('work-banner');
-  if (el) el.remove();
+  return html;
 }
 
 function showComplete(sets, duration) {
@@ -838,7 +804,8 @@ function renderWorkout() {
   EXERCISES.forEach((ex, exIdx) => {
     const allDone = session.sets[exIdx].every(Boolean);
     const someDone = session.sets[exIdx].some(Boolean);
-    const isExpanded = expandedEx === exIdx;
+    // Keep an exercise open while its hold or rest timer is running, so the inline timer stays visible.
+    const isExpanded = expandedEx === exIdx || workExIdx === exIdx || (restSecs > 0 && restExIdx === exIdx);
     const cardClass = `ex-card${allDone?' done-ex':someDone?' active-ex':''}`;
     const badge = allDone
       ? `<span class="ex-badge badge-done">DONE ✓</span>`
@@ -891,6 +858,7 @@ function renderWorkout() {
         </div>
         <div style="font-family:var(--font-display);font-size:10px;letter-spacing:1.5px;color:var(--muted);margin-bottom:6px">FORM CUES</div>
         <div class="tip-card" style="margin-bottom:12px">${cuesHTML}</div>
+        ${timerStripFor(exIdx)}
         <div class="set-header">
           <div class="set-col-label">SET</div>
           <div class="set-col-label">TARGET</div>
@@ -909,14 +877,14 @@ function renderWorkout() {
 
   page.innerHTML = html;
 
-  // Re-insert timers if active
-  if (restSecs > 0) renderRestBanner(restSecs);
-  if (workExIdx !== null) renderWorkBanner(workSecs, workTarget);
-
-  // Scroll to first incomplete exercise
-  const firstIncomplete = EXERCISES.findIndex((_,i) => !session.sets[i].every(Boolean));
-  if (firstIncomplete >= 0) {
-    const el = document.getElementById(`ex-${firstIncomplete}`);
+  // Keep the active exercise in view (running timer, else next incomplete). Only scroll when the
+  // target actually changes, so per-second re-renders never fight the user's own scrolling.
+  const scrollTarget = workExIdx !== null ? workExIdx
+    : (restSecs > 0 && restExIdx !== null) ? restExIdx
+    : EXERCISES.findIndex((_,i) => !session.sets[i].every(Boolean));
+  if (scrollTarget >= 0 && scrollTarget !== lastScrollTarget) {
+    lastScrollTarget = scrollTarget;
+    const el = document.getElementById(`ex-${scrollTarget}`);
     if (el) setTimeout(() => el.scrollIntoView({behavior:'smooth',block:'nearest'}), 100);
   }
 }
