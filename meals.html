@@ -420,11 +420,40 @@ const MEAL_PLAN=[
   ]}
 ];
 
-const MEAL_COLORS={Breakfast:"#3B82F6",Lunch:"#10B981","Batch Cook":"#F59E0B",Dinner:"#8B5CF6"};
+const MEAL_COLORS={Breakfast:"#3B82F6",Lunch:"#10B981","Batch Cook":"#F59E0B",Dinner:"#8B5CF6",Shake:"#EC4899",Snack:"#14B8A6"};
+
+// Daily post-workout shake + a calorie-dense snack, added to every day so the totals actually reach
+// the 2,800 kcal / 160 g protein targets — the three main meals alone fall ~950 kcal / ~40 g short.
+// All no-oven (shaker + fridge only) and in the "Dutch name (English translation)" format.
+const DAILY_SHAKE={type:"Shake",name:"Post-Workout Whey Shake",kcal:255,protein:34,time:"2 min",prepNote:null,
+  ingredients:[
+    "1 schep Whey Proteïne (whey protein scoop)",
+    "300ml Jumbo Halfvolle Melk (semi-skimmed milk)"
+  ],
+  steps:[
+    "Add one scoop of whey to a shaker",
+    "Pour in 300ml semi-skimmed milk",
+    "Shake well and drink within 30 min of training (or around 6pm on rest days)"
+  ]};
+const DAILY_SNACK={type:"Snack",name:"Peanut Butter Overnight Oats",kcal:675,protein:23,time:"5 min (prep night before)",prepNote:null,
+  ingredients:[
+    "80g Jumbo Havermout (rolled oats)",
+    "250ml Jumbo Halfvolle Melk (semi-skimmed milk)",
+    "1 el Jumbo Pindakaas (peanut butter)",
+    "1 banaan (banana)",
+    "1 el Jumbo Honing (honey)"
+  ],
+  steps:[
+    "Stir the oats and milk together in a jar or bowl",
+    "Swirl in the peanut butter and honey",
+    "Leave in the fridge overnight (or eat straight away if short on time)",
+    "Top with sliced banana before eating — no cooking needed"
+  ]};
+MEAL_PLAN.forEach(function(day){ day.meals.push({...DAILY_SHAKE},{...DAILY_SNACK}); });
 
 const GROCERY={
   produce:{label:"Produce & Frozen",color:"#10B981",items:[
-    {name:"Jumbo Bananen (bananas)",qty:"6 stuks",est:"\u20ac1.19"},
+    {name:"Jumbo Bananen (bananas)",qty:"12 stuks",est:"\u20ac2.29"},
     {name:"Jumbo Kerstomaten (cherry tomatoes)",qty:"250g punnet",est:"\u20ac1.49"},
     {name:"Jumbo Komkommer (cucumber)",qty:"1 stuk",est:"\u20ac0.59"},
     {name:"Jumbo Uien (onions)",qty:"1 zak (6 stuks)",est:"\u20ac0.99"},
@@ -442,7 +471,7 @@ const GROCERY={
   dairy:{label:"Dairy & Eggs",color:"#00BFFF",items:[
     {name:"Jumbo Scharrelieren (free-range eggs)",qty:"18 stuks",est:"\u20ac4.49"},
     {name:"Jumbo Griekse Yoghurt 0% (Greek yogurt)",qty:"2x 500g tub",est:"\u20ac3.78"},
-    {name:"Jumbo Halfvolle Melk (semi-skimmed milk)",qty:"2 liter",est:"\u20ac1.59"},
+    {name:"Jumbo Halfvolle Melk (semi-skimmed milk)",qty:"6 liter (3x 2L) \u2014 voor shakes & oats",est:"\u20ac4.77"},
     {name:"Jumbo Roomboter (butter)",qty:"250g",est:"\u20ac2.29"},
     {name:"Jumbo Geraspte Kaas (grated cheese)",qty:"200g zak",est:"\u20ac1.99"},
   ]},
@@ -478,6 +507,8 @@ const GROCERY={
     {name:"Gedroogde Oregano (dried oregano)",qty:"klein potje",est:"\u20ac0.99"},
     {name:"Whey Protein",qty:"bestaande voorraad (existing stock)",est:"\u2014"},
     {name:"Creatine",qty:"bestaande voorraad (existing stock)",est:"\u2014"},
+    {name:"Jumbo Havermout (rolled oats)",qty:"500g",est:"\u20ac0.99"},
+    {name:"Jumbo Pindakaas (peanut butter)",qty:"350g pot",est:"\u20ac1.99"},
   ]}
 };
 
@@ -501,10 +532,9 @@ function PlanPage(){
     // Quote
     h("div",{style:{background:CARD,border:`1px solid ${BORDER}`,borderLeft:`3px solid ${GREEN}`,borderRadius:10,padding:"12px 14px",marginBottom:12,position:"relative",overflow:"hidden"}},
       h("div",{style:{position:"absolute",top:-8,right:8,fontFamily:FONT,fontSize:70,color:`${GREEN}08`,lineHeight:1,pointerEvents:"none"}},"\u201C"),
-      h("div",{style:{fontFamily:FONT,fontSize:9,letterSpacing:2.5,color:GREEN,marginBottom:6}},"WEEK "+(wk+1)+" · NUTRITION"),
-      h("div",{style:{fontFamily:FONT,fontSize:15,fontWeight:700,color:TEXT,lineHeight:1.4}}),
+      h("div",{style:{fontFamily:FONT,fontSize:9,letterSpacing:2.5,color:GREEN,marginBottom:6}},"WEEK "+Math.min(wk+1,26)+" · NUTRITION"),
       h("div",{style:{fontSize:13,color:MUTED2,lineHeight:1.5,fontStyle:"italic"}},"\u201C"+quote.text+"\u201D"),
-      h("div",{style:{fontSize:11,color:MUTED,marginTop:6}}),h("span",null,"\u2014 "+quote.attr)
+      h("div",{style:{fontSize:11,color:MUTED,marginTop:6}},"\u2014 "+quote.attr)
     ),
     // Targets + supplement toggle
     h("div",{style:{background:CARD,border:`1px solid ${BORDER}`,borderRadius:10,padding:"12px 14px",marginBottom:12}},
@@ -685,8 +715,10 @@ function GroceryPage(){
 
   const sections=Object.keys(GROCERY);
   const totalItems=sections.reduce((a,s)=>a+GROCERY[s].items.length,0);
-  const totalChecked=[...checked].length;
-  const pct=Math.round((totalChecked/totalItems)*100);
+  // Count only keys that map to a current item, so orphaned keys (from edited/removed items) don't inflate the total.
+  const validKeys=new Set();sections.forEach(s=>GROCERY[s].items.forEach((_,i)=>validKeys.add(s+i)));
+  const totalChecked=[...checked].filter(k=>validKeys.has(k)).length;
+  const pct=totalItems?Math.round((totalChecked/totalItems)*100):0;
   const sec=GROCERY[activeSection];
   const estTotal=sections.reduce((sum,s)=>sum+GROCERY[s].items.reduce((a,item)=>{
     const m=item.est.match(/[\d.]+/);return a+(m?parseFloat(m[0]):0);
@@ -772,7 +804,7 @@ function App(){
           h("div",{style:{fontSize:10,color:MUTED,letterSpacing:1.5,marginTop:2}},"WEEKLY PLAN · 2,800 KCAL")
         ),
         h("div",{style:{textAlign:"right"}},
-          h("div",{style:{fontSize:11,color:MUTED}},"Week "+((getWeekNum()%26)+1)+" / 26"),
+          h("div",{style:{fontSize:11,color:MUTED}},"Week "+Math.min(getWeekNum()+1,26)+" / 26"),
           h("div",{style:{fontSize:10,color:MUTED,marginTop:1}},"Apr 26 – Oct 26, 2025")
         )
       )
