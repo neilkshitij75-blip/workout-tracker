@@ -246,11 +246,11 @@ function App(){
   function addSet(ex){setWSets(p=>({...p,[ex]:[...p[ex],{weight:"",reps:"",done:false}]}));}
   function finishW(){
     const today=todayISO();
-    // Capture the actual weight/reps of every completed set (this used to be discarded).
+    // Capture full per-set detail (set number, weight, reps) for every completed set of every exercise.
     const logged={};
     Object.entries(wSets).forEach(([ex,sets])=>{
-      const done=sets.filter(x=>x.done&&(x.weight!==""||x.reps!==""));
-      if(done.length)logged[ex]=done.map(s=>({weight:s.weight,reps:s.reps}));
+      const entries=sets.map((s,i)=>({set:i+1,weight:s.weight,reps:s.reps,done:s.done})).filter(s=>s.done);
+      if(entries.length)logged[ex]=entries;
     });
     const totalSets=Object.values(wSets).reduce((a,s)=>a+s.filter(x=>x.done).length,0);
     // Real PR detection: best set per exercise vs the stored record.
