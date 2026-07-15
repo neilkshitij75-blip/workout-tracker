@@ -59,8 +59,8 @@ function getWeekNum(){
 }
 
 // BATCH STRUCTURE:
-// SUNDAY (~55 min): Nasi Goreng x3 (Sun/Mon/Tue lunch) + Airfryer Honey Garlic Chicken x3 (Sun/Mon/Tue dinner)
-// WEDNESDAY (~30 min, weekday-simple): Airfryer Lemon Herb Chicken + Sweet Potato x3 (Wed/Thu/Fri lunch) + Beef Taco Bowl x3 (Wed/Thu/Fri dinner)
+// SUNDAY (~55 min): Nasi Goreng x3 (Sun/Mon/Tue lunch) + Airfryer Honey Garlic Chicken over egg noodles x3 (Sun/Mon/Tue dinner)
+// WEDNESDAY (~40 min, weekday-simple): Airfryer Lemon Herb Chicken + Sweet Potato x3 (Wed/Thu/Fri lunch) + Airfryer Sticky Asian Meatballs + Rice x3 (Wed/Thu/Fri dinner)
 // SATURDAY: Poke Bowl (lunch, fresh) + Pan-seared Steak + Airfryer Sweet Potato (dinner, treat)
 // BREAKFASTS: Option A = Greek Yogurt Power Bowl | Option B = Scrambled Eggs + Smoked Chicken + Fruit
 
@@ -90,7 +90,7 @@ const MEAL_PLAN=[
        "Store remaining 2 portions in airtight containers in fridge"
      ]},
     {type:"Dinner",name:"Honey Garlic Chicken (from Sunday batch)",kcal:680,protein:46,time:"0 min — eat from batch",prepNote:"Serve straight from the airfryer — crispy and hot",
-     ingredients:["Portioned Honey Garlic Chicken + rice (from batch cook below)"],
+     ingredients:["Portioned Honey Garlic Chicken + egg noodles (from batch cook below)"],
      steps:[
        "Serve one portion directly — caramelised and crispy from the airfryer",
        "Store remaining 2 portions in fridge — they reheat well",
@@ -119,10 +119,10 @@ const MEAL_PLAN=[
        "1 el rijstazijn (rice vinegar) — balances the sweetness, do not skip",
        "1 el Jumbo Sesamolie (sesame oil)",
        "Jumbo Sesamzaad (sesame seeds) for garnish",
-       "300g Jumbo Basmatirijst (basmati rice) — cook separately"
+       "300g Jumbo Eiermie (egg noodles) — boil 4 min and drain"
      ],
      steps:[
-       "START RICE: Cook 300g rice in a pot — set aside for chicken portions",
+       "START NOODLES: Boil 300g egg noodles for 4 min, drain and set aside for the chicken portions",
        "HONEY GARLIC SAUCE: Mix honey, soy sauce, garlic, ginger, chilli, rice vinegar in a bowl — set aside",
        "AIRFRYER CHICKEN: Pat chicken thighs completely dry with kitchen paper (critical for crispiness)",
        "Season both sides with salt, pepper and a pinch of garlic powder",
@@ -137,7 +137,7 @@ const MEAL_PLAN=[
        "Top with spring onion greens, portion into 3 containers",
        "FINISH CHICKEN: When done, immediately pour honey garlic sauce over hot chicken in pan",
        "Toss 1-2 min on hob on medium heat until sauce is sticky and caramelised",
-       "Drizzle sesame oil, scatter sesame seeds, portion over rice into 3 containers",
+       "Drizzle sesame oil, scatter sesame seeds, portion over the egg noodles into 3 containers",
        "Cool uncovered 10 min before sealing — store in fridge up to 3 days"
      ]}
   ]},
@@ -169,11 +169,11 @@ const MEAL_PLAN=[
      ]},
     {type:"Dinner",name:"Honey Garlic Chicken (from Sunday batch)",kcal:680,protein:46,time:"3 min reheat",prepNote:"Best reheated in airfryer to restore crispiness",
      ingredients:[
-       "Portioned Honey Garlic Chicken + rice container",
-       "splash of water on the rice"
+       "Portioned Honey Garlic Chicken + egg noodles container",
+       "splash of water on the noodles"
      ],
      steps:[
-       "Add a splash of water to the rice side only",
+       "Add a splash of water to the noodles only",
        "Microwave 2.5 min then transfer chicken to airfryer tray",
        "Airfryer 180°C for 60-90 sec to crisp back up",
        "Or just microwave 3 min if you don't mind softer texture"
@@ -206,7 +206,7 @@ const MEAL_PLAN=[
      ]},
     {type:"Dinner",name:"Honey Garlic Chicken (from Sunday batch)",kcal:680,protein:46,time:"3 min reheat",prepNote:"Last Honey Garlic Chicken container",
      ingredients:[
-       "Portioned Honey Garlic Chicken + rice container"
+       "Portioned Honey Garlic Chicken + egg noodles container"
      ],
      steps:[
        "Microwave 2.5 min + 90 sec airfryer at 180°C for crispy finish",
@@ -233,22 +233,19 @@ const MEAL_PLAN=[
        "Store remaining 2 portions in fridge for Thu and Fri",
        "REHEAT TIP: airfryer 180°C for 3-4 min to restore crispiness, or microwave 3 min"
      ]},
-    {type:"Dinner",name:"Beef Taco Bowl (from Wednesday batch)",kcal:690,protein:46,time:"0 min — eat from batch",prepNote:"Assemble tacos fresh — beef from batch",
+    {type:"Dinner",name:"Sticky Asian Meatballs + Rice (from Wednesday batch)",kcal:690,protein:46,time:"0 min — eat from batch",prepNote:"Serve straight from the airfryer — sticky and hot",
      ingredients:[
-       "Portioned Beef Taco Bowl (from batch cook below)",
-       "Jumbo Volkoren Tortillas (wholegrain tortillas) — warm in dry pan",
-       "Jumbo Geraspte Kaas (grated cheese)",
-       "Salsa jar",
-       "Fresh lime wedges",
-       "Verse Koriander (fresh coriander)"
+       "Portioned Sticky Asian Meatballs + rice (from batch cook below)",
+       "Jumbo Lente-ui (spring onion) — to garnish",
+       "Jumbo Sesamzaad (sesame seeds) — to garnish"
      ],
      steps:[
-       "Serve beef + bean mix directly — still hot from cooking",
-       "Warm tortilla in dry pan 30 sec each side",
-       "Fill with beef mix, top with cheese, salsa, lime squeeze and coriander",
-       "Store remaining 2 portions of beef mix in fridge for Thu and Fri"
+       "Serve one portion directly — meatballs are sticky and caramelised from the airfryer",
+       "Garnish with spring onion and sesame seeds",
+       "Store remaining 2 portions in fridge for Thu and Fri",
+       "REHEAT TIP: microwave 2.5 min, or 90 sec in airfryer at 180°C to re-crisp the meatballs"
      ]},
-    {type:"Batch Cook",name:"WEDNESDAY PREP — Lemon Herb Chicken x3 + Beef Taco Bowl x3",kcal:0,protein:0,time:"30 min total",prepNote:"Quick weekday prep — airfryer does most of the work while you make the beef.",
+    {type:"Batch Cook",name:"WEDNESDAY PREP — Lemon Herb Chicken x3 + Sticky Asian Meatballs x3",kcal:0,protein:0,time:"40 min total",prepNote:"Quick weekday prep — the airfryer runs the chicken then the meatballs while you make the rice and sauce.",
      ingredients:[
        "— LEMON HERB CHICKEN + SWEET POTATO (x3 portions) —",
        "700g Jumbo Kippendijen zonder bot (boneless chicken thighs)",
@@ -262,18 +259,22 @@ const MEAL_PLAN=[
        "salt and black pepper generously",
        "2 grote Jumbo Zoete Aardappel (large sweet potatoes) cubed",
        "1 el Jumbo Olijfolie (olive oil) for sweet potato",
-       "— BEEF TACO BOWL (x3 portions) —",
-       "600g Jumbo Rundergehakt (lean ground beef)",
-       "2 blikken Jumbo Zwarte Bonen (canned black beans) drained",
-       "3 teentjes knoflook (garlic cloves) minced",
-       "1 tl Jumbo Komijnpoeder (ground cumin)",
-       "1 tl Jumbo Gerookt Paprikapoeder (smoked paprika)",
-       "1 tl chilipoeder (chilli powder)",
-       "1 tl gedroogde oregano (dried oregano)",
-       "1 blik Jumbo Tomatenblokjes (canned chopped tomatoes)",
-       "2 el Conimex Sojasaus (soy sauce)",
-       "juice of 1 lime",
-       "1 el Jumbo Zonnebloemolie (sunflower oil)"
+       "— STICKY ASIAN MEATBALLS + RICE (x3 portions) —",
+       "600g Jumbo Rundergehakt (ground beef)",
+       "1 Jumbo Scharrelieren (egg)",
+       "3 el paneermeel (breadcrumbs)",
+       "3 teentjes knoflook (garlic cloves) minced — for the meatballs",
+       "1 tl gemberpoeder (ginger powder)",
+       "salt and black pepper — for the meatballs",
+       "4 el Conimex Sojasaus (soy sauce) — for the sauce",
+       "3 el Jumbo Honing (honey) — for the sauce",
+       "2 teentjes knoflook (garlic cloves) — for the sauce",
+       "1 el rijstazijn (rice vinegar)",
+       "1 tl chilivlokken (chilli flakes)",
+       "1 el Jumbo Sesamolie (sesame oil)",
+       "300g Jumbo Basmatirijst (basmati rice) — cook separately",
+       "Jumbo Lente-ui (spring onion) — to garnish",
+       "Jumbo Sesamzaad (sesame seeds) — to garnish"
      ],
      steps:[
        "MARINATE CHICKEN: Mix lemon juice + zest, olive oil, garlic, paprika, cumin, oregano, chilli, salt and pepper in a bowl",
@@ -281,14 +282,15 @@ const MEAL_PLAN=[
        "SWEET POTATO: Cube sweet potatoes, toss with olive oil, salt, pepper and a pinch of paprika",
        "AIRFRYER: Add chicken and sweet potato to airfryer basket (they can share space)",
        "200°C for 22 min — flip chicken and toss sweet potato at the 12 min mark",
-       "While airfryer runs, make the beef:",
-       "BEEF TACO: Heat oil in pan, brown beef 5 min breaking up lumps completely",
-       "Add garlic, cumin, paprika, chilli, oregano — stir 1 min until fragrant",
-       "Add tomatoes and soy sauce — simmer 8 min, stirring occasionally",
-       "Add black beans, stir through 2 min",
-       "Squeeze in lime juice, taste — should be smoky, bold and slightly tangy",
-       "If too dry add a splash of water — it should be saucy not crumbly",
-       "PORTION: Divide chicken + sweet potato into 3 containers. Portion beef mix into 3 containers",
+       "While the airfryer runs, make the meatballs and rice:",
+       "START RICE: Cook 300g basmati rice in a pot and set aside",
+       "MEATBALLS: Mix ground beef, egg, breadcrumbs, garlic, ginger, salt and pepper",
+       "Roll into 15-18 evenly sized meatballs",
+       "SAUCE: Heat soy sauce, honey, garlic, rice vinegar, chilli flakes and sesame oil in a small pan for 3 min until slightly thickened — set aside",
+       "When the chicken + sweet potato are done, portion them into 3 containers",
+       "AIRFRYER MEATBALLS: Airfryer at 200°C for 12 min, shaking the basket halfway through",
+       "Toss the airfried meatballs in the sticky sauce until well coated",
+       "PORTION: Divide the meatballs over the cooked rice into 3 containers, garnish with spring onion and sesame seeds",
        "Cool 10 min before sealing — fridge up to 3 days"
      ]}
   ]},
@@ -315,16 +317,16 @@ const MEAL_PLAN=[
        "Airfryer 180°C for 4 min — chicken crisps back up beautifully",
        "Or microwave 3 min if short on time — still tasty"
      ]},
-    {type:"Dinner",name:"Beef Taco Bowl (from Wednesday batch)",kcal:690,protein:46,time:"5 min reheat",prepNote:"Reheat beef, assemble tacos fresh",
+    {type:"Dinner",name:"Sticky Asian Meatballs + Rice (from Wednesday batch)",kcal:690,protein:46,time:"3 min reheat",prepNote:"Reheat and re-crisp the meatballs",
      ingredients:[
-       "Portioned Beef Taco Bowl container",
-       "Jumbo Volkoren Tortillas","Jumbo Geraspte Kaas (grated cheese)",
-       "Salsa jar","fresh lime","Verse Koriander (fresh coriander)"
+       "Portioned Sticky Asian Meatballs + rice container",
+       "Jumbo Lente-ui (spring onion) — to garnish",
+       "Jumbo Sesamzaad (sesame seeds) — to garnish"
      ],
      steps:[
-       "Microwave beef + bean mix 3 min with a splash of water",
-       "Warm tortilla in dry pan 30 sec each side",
-       "Fill with beef, cheese, salsa, lime and coriander"
+       "Microwave 2.5 min, or 90 sec in airfryer at 180°C to re-crisp the meatballs",
+       "Add a splash of water to the rice if it looks dry",
+       "Garnish with fresh spring onion and sesame seeds"
      ]}
   ]},
   {day:"Friday",prep:false,theme:"Push Day",meals:[
@@ -348,15 +350,15 @@ const MEAL_PLAN=[
        "Airfryer 180°C for 4 min for crispy finish",
        "Or microwave 3 min — last one from batch"
      ]},
-    {type:"Dinner",name:"Beef Taco Bowl (from Wednesday batch)",kcal:690,protein:46,time:"5 min reheat",prepNote:"Last Beef Taco Bowl container",
+    {type:"Dinner",name:"Sticky Asian Meatballs + Rice (from Wednesday batch)",kcal:690,protein:46,time:"3 min reheat",prepNote:"Last meatball container",
      ingredients:[
-       "Portioned Beef Taco Bowl container",
-       "Jumbo Volkoren Tortillas","Jumbo Geraspte Kaas (grated cheese)",
-       "Salsa jar","fresh lime","Verse Koriander (fresh coriander)"
+       "Portioned Sticky Asian Meatballs + rice container",
+       "Jumbo Lente-ui (spring onion) — to garnish",
+       "Jumbo Sesamzaad (sesame seeds) — to garnish"
      ],
      steps:[
-       "Microwave beef 3 min with splash of water",
-       "Warm tortilla, fill and assemble — done"
+       "Microwave 2.5 min, or 90 sec in airfryer at 180°C to re-crisp the meatballs",
+       "Add a splash of water to the rice if dry, then garnish and eat"
      ]}
   ]},
   {day:"Saturday",prep:false,theme:"Fresh Cook Day",meals:[
@@ -469,7 +471,7 @@ const GROCERY={
     {name:"Jumbo Diepvries Edamame (frozen edamame)",qty:"400g zak",est:"\u20ac2.49"},
   ]},
   dairy:{label:"Dairy & Eggs",color:"#00BFFF",items:[
-    {name:"Jumbo Scharrelieren (free-range eggs)",qty:"18 stuks",est:"\u20ac4.49"},
+    {name:"Jumbo Scharrelieren (free-range eggs)",qty:"19 stuks",est:"\u20ac4.74"},
     {name:"Jumbo Griekse Yoghurt 0% (Greek yogurt)",qty:"2x 500g tub",est:"\u20ac3.78"},
     {name:"Jumbo Halfvolle Melk (semi-skimmed milk)",qty:"6 liter (3x 2L) \u2014 voor shakes & oats",est:"\u20ac4.77"},
     {name:"Jumbo Roomboter (butter)",qty:"250g",est:"\u20ac2.29"},
@@ -489,14 +491,12 @@ const GROCERY={
     {name:"Jumbo Granola Naturel (plain granola)",qty:"400g",est:"\u20ac2.49"},
     {name:"Jumbo Honing (honey)",qty:"350g pot",est:"\u20ac1.99"},
     {name:"Jumbo Gemengde Noten (mixed nuts)",qty:"200g",est:"\u20ac2.99"},
-    {name:"Salsa (medium jar)",qty:"1 pot",est:"\u20ac1.99"},
     {name:"Conimex Ketjap Manis (sweet soy sauce)",qty:"240ml fles",est:"\u20ac2.49"},
     {name:"Conimex Sambal Oelek (chilli paste)",qty:"200ml pot",est:"\u20ac1.99"},
     {name:"Conimex Sojasaus (soy sauce)",qty:"150ml fles",est:"\u20ac1.29"},
     {name:"Vissaus (fish sauce)",qty:"1 klein flesje — Jumbo or toko",est:"\u20ac1.99"},
     {name:"Rijstazijn (rice vinegar)",qty:"1 klein flesje",est:"\u20ac1.49"},
     {name:"Jumbo Tomatenblokjes (canned chopped tomatoes)",qty:"1 blik (400g)",est:"\u20ac0.59"},
-    {name:"Jumbo Zwarte Bonen (canned black beans)",qty:"2 blikjes (2x400g)",est:"\u20ac1.98"},
     {name:"Jumbo Olijfolie (olive oil)",qty:"500ml fles",est:"\u20ac2.99"},
     {name:"Jumbo Zonnebloemolie (sunflower oil)",qty:"500ml",est:"\u20ac1.49"},
     {name:"Jumbo Sesamolie (sesame oil)",qty:"150ml",est:"\u20ac2.19"},
@@ -509,6 +509,9 @@ const GROCERY={
     {name:"Creatine",qty:"bestaande voorraad (existing stock)",est:"\u2014"},
     {name:"Jumbo Havermout (rolled oats)",qty:"500g",est:"\u20ac0.99"},
     {name:"Jumbo Pindakaas (peanut butter)",qty:"350g pot",est:"\u20ac1.99"},
+    {name:"Paneermeel (breadcrumbs)",qty:"klein pak",est:"\u20ac0.99"},
+    {name:"Jumbo Eiermie (egg noodles)",qty:"500g",est:"\u20ac1.49"},
+    {name:"Chilivlokken (chilli flakes)",qty:"klein potje",est:"\u20ac0.99"},
   ]}
 };
 
