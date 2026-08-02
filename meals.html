@@ -36,7 +36,7 @@ const FONT="'Barlow Condensed',sans-serif",FBODY="'Barlow',sans-serif";
 const KCAL_TARGET=2800;
 const PROTEIN_TARGET=160;
 
-const SUPPLEMENT_INFO="Take creatine with breakfast every day — stir into water, milk or yogurt. Post-workout whey shake at ~6pm every day (training and rest days). One scoop + 300ml milk.";
+const SUPPLEMENT_INFO="Take creatine with breakfast every day, training or not. Take a whey shake daily at ~6pm as well, even on rest days — consistency matters more than timing for both.";
 
 const QUOTES=[
   {text:"You are what you eat. Don't be fast, cheap, easy, or fake.",attr:"Unknown"},
@@ -424,9 +424,24 @@ const MEAL_PLAN=[
 
 const MEAL_COLORS={Breakfast:"#3B82F6",Lunch:"#10B981","Batch Cook":"#F59E0B",Dinner:"#8B5CF6",Shake:"#EC4899",Snack:"#14B8A6"};
 
-// Daily post-workout shake + a calorie-dense snack, added to every day so the totals actually reach
-// the 2,800 kcal / 160 g protein targets — the three main meals alone fall ~950 kcal / ~40 g short.
+// One consistent breakfast for every day + a daily post-workout shake. Lunch and dinner stay as authored.
 // All no-oven (shaker + fridge only) and in the "Dutch name (English translation)" format.
+const DAILY_BREAKFAST={type:"Breakfast",name:"Greek Yogurt + Mixed Seeds Bowl",kcal:520,protein:34,time:"2 min",prepNote:null,
+  ingredients:[
+    "250g Jumbo Griekse Yoghurt 0% (Greek yogurt)",
+    "1 el pompoenpitten (pumpkin seeds)",
+    "1 el Jumbo Chiazaad (chia seeds)",
+    "1 el lijnzaad (flaxseed)",
+    "1 el zonnebloempitten (sunflower seeds)",
+    "1.5 el Jumbo Honing (honey)",
+    "1 banaan (banana) on the side"
+  ],
+  steps:[
+    "Scoop yogurt into a bowl",
+    "Mix in the pumpkin seeds, chia seeds, flaxseed and sunflower seeds",
+    "Drizzle honey on top",
+    "Eat the banana on the side"
+  ]};
 const DAILY_SHAKE={type:"Shake",name:"Post-Workout Whey Shake",kcal:255,protein:34,time:"2 min",prepNote:null,
   ingredients:[
     "1 schep Whey Proteïne (whey protein scoop)",
@@ -437,25 +452,16 @@ const DAILY_SHAKE={type:"Shake",name:"Post-Workout Whey Shake",kcal:255,protein:
     "Pour in 300ml semi-skimmed milk",
     "Shake well and drink within 30 min of training (or around 6pm on rest days)"
   ]};
-const DAILY_SNACK={type:"Snack",name:"Peanut Butter Overnight Oats",kcal:675,protein:23,time:"5 min (prep night before)",prepNote:null,
-  ingredients:[
-    "80g Jumbo Havermout (rolled oats)",
-    "250ml Jumbo Halfvolle Melk (semi-skimmed milk)",
-    "1 el Jumbo Pindakaas (peanut butter)",
-    "1 banaan (banana)",
-    "1 el Jumbo Honing (honey)"
-  ],
-  steps:[
-    "Stir the oats and milk together in a jar or bowl",
-    "Swirl in the peanut butter and honey",
-    "Leave in the fridge overnight (or eat straight away if short on time)",
-    "Top with sliced banana before eating — no cooking needed"
-  ]};
-MEAL_PLAN.forEach(function(day){ day.meals.push({...DAILY_SHAKE},{...DAILY_SNACK}); });
+// Standardise every day's breakfast and append the daily shake (lunch/dinner untouched).
+MEAL_PLAN.forEach(function(day){
+  const i=day.meals.findIndex(function(m){return m.type==='Breakfast';});
+  if(i>=0) day.meals[i]={...DAILY_BREAKFAST};
+  day.meals.push({...DAILY_SHAKE});
+});
 
 const GROCERY={
   produce:{label:"Produce & Frozen",color:"#10B981",items:[
-    {name:"Jumbo Bananen (bananas)",qty:"12 stuks",est:"\u20ac2.29"},
+    {name:"Jumbo Bananen (bananas)",qty:"8 stuks",est:"\u20ac1.59"},
     {name:"Jumbo Kerstomaten (cherry tomatoes)",qty:"250g punnet",est:"\u20ac1.49"},
     {name:"Jumbo Komkommer (cucumber)",qty:"1 stuk",est:"\u20ac0.59"},
     {name:"Jumbo Uien (onions)",qty:"1 zak (6 stuks)",est:"\u20ac0.99"},
@@ -467,13 +473,12 @@ const GROCERY={
     {name:"Verse Limoenen (fresh limes)",qty:"2 stuks",est:"\u20ac0.69"},
     {name:"Verse Koriander (fresh coriander)",qty:"1 bosje",est:"\u20ac0.79"},
     {name:"Verse Gember (fresh ginger) or gemberpoeder",qty:"1 stukje (~30g)",est:"\u20ac0.49"},
-    {name:"Jumbo Diepvries Bosvruchten (frozen mixed berries)",qty:"500g zak",est:"\u20ac2.29"},
     {name:"Jumbo Diepvries Edamame (frozen edamame)",qty:"400g zak",est:"\u20ac2.49"},
   ]},
   dairy:{label:"Dairy & Eggs",color:"#00BFFF",items:[
-    {name:"Jumbo Scharrelieren (free-range eggs)",qty:"19 stuks",est:"\u20ac4.74"},
-    {name:"Jumbo Griekse Yoghurt 0% (Greek yogurt)",qty:"2x 500g tub",est:"\u20ac3.78"},
-    {name:"Jumbo Halfvolle Melk (semi-skimmed milk)",qty:"6 liter (3x 2L) \u2014 voor shakes & oats",est:"\u20ac4.77"},
+    {name:"Jumbo Scharrelieren (free-range eggs)",qty:"9 stuks",est:"\u20ac2.29"},
+    {name:"Jumbo Griekse Yoghurt 0% (Greek yogurt)",qty:"4x 500g tub \u2014 250g daily",est:"\u20ac7.56"},
+    {name:"Jumbo Halfvolle Melk (semi-skimmed milk)",qty:"3 liter (2x 1.5L) \u2014 voor shakes",est:"\u20ac2.39"},
     {name:"Jumbo Roomboter (butter)",qty:"250g",est:"\u20ac2.29"},
     {name:"Jumbo Geraspte Kaas (grated cheese)",qty:"200g zak",est:"\u20ac1.99"},
   ]},
@@ -482,15 +487,12 @@ const GROCERY={
     {name:"Jumbo Kippendijen zonder bot (boneless chicken thighs)",qty:"1.4kg (2x 700g)",est:"\u20ac9.78"},
     {name:"Jumbo Rundergehakt (lean ground beef)",qty:"600g",est:"\u20ac5.29"},
     {name:"Jumbo Entrecote (sirloin steak)",qty:"1 stuk (~200-220g)",est:"\u20ac5.99"},
-    {name:"Jumbo Gerookte Kipfilet (smoked chicken breast slices)",qty:"3x 150g pack",est:"\u20ac5.97"},
     {name:"Jumbo Zalmfilet (salmon fillet) or Jongen Tonijn",qty:"1 filet or 1 blik",est:"\u20ac2.99"},
   ]},
   pantry:{label:"Pantry & Dry Goods",color:"#F59E0B",items:[
     {name:"Jumbo Basmatirijst (basmati rice)",qty:"1kg",est:"\u20ac1.69"},
     {name:"Jumbo Volkoren Tortillas (wholegrain tortillas)",qty:"2x 8 stuks",est:"\u20ac3.78"},
-    {name:"Jumbo Granola Naturel (plain granola)",qty:"400g",est:"\u20ac2.49"},
-    {name:"Jumbo Honing (honey)",qty:"350g pot",est:"\u20ac1.99"},
-    {name:"Jumbo Gemengde Noten (mixed nuts)",qty:"200g",est:"\u20ac2.99"},
+    {name:"Jumbo Honing (honey)",qty:"500g pot \u2014 daily breakfast + sauces",est:"\u20ac2.79"},
     {name:"Conimex Ketjap Manis (sweet soy sauce)",qty:"240ml fles",est:"\u20ac2.49"},
     {name:"Conimex Sambal Oelek (chilli paste)",qty:"200ml pot",est:"\u20ac1.99"},
     {name:"Conimex Sojasaus (soy sauce)",qty:"150ml fles",est:"\u20ac1.29"},
@@ -507,11 +509,13 @@ const GROCERY={
     {name:"Gedroogde Oregano (dried oregano)",qty:"klein potje",est:"\u20ac0.99"},
     {name:"Whey Protein",qty:"bestaande voorraad (existing stock)",est:"\u2014"},
     {name:"Creatine",qty:"bestaande voorraad (existing stock)",est:"\u2014"},
-    {name:"Jumbo Havermout (rolled oats)",qty:"500g",est:"\u20ac0.99"},
-    {name:"Jumbo Pindakaas (peanut butter)",qty:"350g pot",est:"\u20ac1.99"},
     {name:"Paneermeel (breadcrumbs)",qty:"klein pak",est:"\u20ac0.99"},
     {name:"Jumbo Eiermie (egg noodles)",qty:"500g",est:"\u20ac1.49"},
     {name:"Chilivlokken (chilli flakes)",qty:"klein potje",est:"\u20ac0.99"},
+    {name:"Pompoenpitten (pumpkin seeds)",qty:"200g zak",est:"\u20ac1.99"},
+    {name:"Jumbo Chiazaad (chia seeds)",qty:"200g",est:"\u20ac2.49"},
+    {name:"Lijnzaad (flaxseed)",qty:"200g",est:"\u20ac1.49"},
+    {name:"Zonnebloempitten (sunflower seeds)",qty:"200g zak",est:"\u20ac1.49"},
   ]}
 };
 

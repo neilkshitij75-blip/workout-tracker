@@ -74,8 +74,8 @@ const QUOTES=[
 const PLAN={
   "Day 1: Push":{color:"#FF6B35",exercises:[{name:"Incline Dumbbell Press",muscle:"Upper Chest",prev:"18kg × 10"},{name:"Flat Bench Press",muscle:"Chest",prev:"22.5kg × 8"},{name:"Arnold Press",muscle:"Shoulders",prev:"14kg × 10"},{name:"Cable Lateral Raise",muscle:"Side Delts",prev:"5kg × 12"},{name:"Tricep Pushdown",muscle:"Triceps",prev:"15kg × 12"},{name:"Overhead Tricep Ext",muscle:"Triceps",prev:"20kg × 10"}]},
   "Day 2: Pull":{color:"#8B5CF6",exercises:[{name:"Neutral Grip Pulldown",muscle:"Lats",prev:"35kg × 10"},{name:"Seated Cable Row",muscle:"Mid Back",prev:"35kg × 10"},{name:"Bent-Over Row",muscle:"Back",prev:"14kg × 10"},{name:"Incline DB Curl",muscle:"Biceps",prev:"10kg × 12"},{name:"Hammer Curl",muscle:"Biceps",prev:"10kg × 12"},{name:"Face Pull",muscle:"Rear Delts",prev:"15kg × 15"}]},
-  "Day 3: Legs":{color:"#10B981",exercises:[{name:"Leg Press",muscle:"Quads",prev:"60kg × 12"},{name:"Leg Extension",muscle:"Quads",prev:"30kg × 12"},{name:"Hamstring Curl",muscle:"Hamstrings",prev:"30kg × 10"},{name:"Dumbbell Lunge",muscle:"Glutes",prev:"12kg × 10"},{name:"Calf Raises",muscle:"Calves",prev:"45kg × 15"},{name:"Dumbbell Squat",muscle:"Quads",prev:"20kg × 12"}]},
-  "Day 4: Upper":{color:"#F59E0B",exercises:[{name:"Weighted Dips",muscle:"Chest/Triceps",prev:"+30kg × 8"},{name:"Shoulder Press",muscle:"Shoulders",prev:"35kg × 10"},{name:"Front Raise",muscle:"Front Delts",prev:"6kg × 12"},{name:"Bicep Curl",muscle:"Biceps",prev:"5kg × 15"},{name:"Tricep Kickback",muscle:"Triceps",prev:"16kg × 12"},{name:"Bent-Over Row",muscle:"Back",prev:"14kg × 10"}]},
+  "Day 3: Legs":{color:"#10B981",exercises:[{name:"Leg Press",muscle:"Quads",prev:"60kg × 12"},{name:"Leg Extension",muscle:"Quads",prev:"30kg × 12"},{name:"Hamstring Curl",muscle:"Hamstrings",prev:"30kg × 10"},{name:"Calf Raises",muscle:"Calves",prev:"45kg × 15"},{name:"Dumbbell Squat",muscle:"Quads",prev:"20kg × 12"}]},
+  "Day 4: Upper":{color:"#F59E0B",exercises:[{name:"Weighted Dips",muscle:"Chest/Triceps",prev:"BW × 8",repFocus:true,target:"Bodyweight · aim 12–15 clean reps"},{name:"Shoulder Press",muscle:"Shoulders",prev:"35kg × 10"},{name:"Front Raise",muscle:"Front Delts",prev:"6kg × 12"},{name:"Bicep Curl",muscle:"Biceps",prev:"5kg × 15"},{name:"Tricep Kickback",muscle:"Triceps",prev:"16kg × 12"},{name:"Bent-Over Row",muscle:"Back",prev:"14kg × 10"}]},
 };
 const MCOLORS={"Upper Chest":"#FF8C5A","Chest":"#FF6B35","Chest/Triceps":"#F87171","Quads":"#10B981","Hamstrings":"#059669","Calves":"#34D399","Back":"#8B5CF6","Lats":"#A78BFA","Mid Back":"#C4B5FD","Rear Delts":"#DDD6FE","Shoulders":"#00BFFF","Side Delts":"#38BDF8","Front Delts":"#7DD3FC","Biceps":"#F59E0B","Triceps":"#EF4444","Glutes":"#10B981"};
 
@@ -85,7 +85,7 @@ const SEED_HISTORY=[
   {id:3,name:"Day 2: Pull",date:"2025-04-16",duration:48,sets:16,exercises:["Neutral Grip Pulldown","Seated Cable Row","Incline DB Curl","Hammer Curl"],prs:[]},
   {id:4,name:"Day 1: Push",date:"2025-04-14",duration:52,sets:18,exercises:["Incline DB Press","Flat Bench Press","Arnold Press","Tricep Pushdown"],prs:["Flat Bench Press"]},
 ];
-const SEED_PRS=[{exercise:"Weighted Dips",weight:"+30kg",reps:8,date:"Apr 14"},{exercise:"Seated Cable Row",weight:"35kg",reps:10,date:"Apr 16"},{exercise:"Leg Press",weight:"60kg",reps:12,date:"Apr 18"}];
+const SEED_PRS=[{exercise:"Weighted Dips",weight:"BW",reps:8,date:"Apr 14"},{exercise:"Seated Cable Row",weight:"35kg",reps:10,date:"Apr 16"},{exercise:"Leg Press",weight:"60kg",reps:12,date:"Apr 18"}];
 const SEED_WEIGHT=69;
 const DEFAULT_PROGRAM={startDate:"2025-04-26",weeks:26,startWeight:69,goalWeight:75};
 const MGROUP={"Upper Chest":"Chest","Chest":"Chest","Chest/Triceps":"Chest","Shoulders":"Shoulders","Side Delts":"Shoulders","Front Delts":"Shoulders","Rear Delts":"Shoulders","Back":"Back","Lats":"Back","Mid Back":"Back","Quads":"Legs","Hamstrings":"Legs","Glutes":"Legs","Calves":"Legs","Biceps":"Biceps","Triceps":"Triceps"};
@@ -154,6 +154,9 @@ function getDaysSince(history){
   if(!history.length)return null;
   return daysDiff(history[0].date,todayISO());
 }
+
+// Look up an exercise's definition (muscle, repFocus, target…) by name across the whole plan.
+function exDefByName(name){for(const d in PLAN){const e=PLAN[d].exercises.find(x=>x.name===name);if(e)return e;}return null;}
 
 // Most recent actually-logged top set (by weight, then reps) for an exercise. Powers the PREV column.
 function lastLoggedTop(history,exName){
@@ -257,10 +260,22 @@ function App(){
     const prMap={};prs.forEach(p=>{prMap[p.exercise]=p;});
     const hitPRs=[];
     Object.entries(logged).forEach(([ex,sets])=>{
+      const cur=prMap[ex];
+      // Rep-focused (e.g. bodyweight) exercises: a PR is more reps, weight ignored.
+      if(exDefByName(ex)&&exDefByName(ex).repFocus){
+        let best=null;sets.forEach(s=>{const r=parseInt(s.reps)||0,w=parseFloat(s.weight)||0;if(!best||r>best.r)best={w,r};});
+        if(!best||best.r<=0)return;
+        const cr=cur?cur.reps||0:0;
+        if(best.r>cr){
+          prMap[ex]={exercise:ex,weight:best.w>0?best.w+"kg":"BW",reps:best.r,date:fmtShort(today),dateISO:today};
+          hitPRs.push(ex);
+        }
+        return;
+      }
       let best=null;
       sets.forEach(s=>{const w=parseFloat(s.weight)||0,r=parseInt(s.reps)||0;if(!best||w>best.w||(w===best.w&&r>best.r))best={w,r};});
       if(!best||(best.w<=0&&best.r<=0))return;
-      const cur=prMap[ex];const cw=cur?parseFloat(cur.weight)||0:0,cr=cur?cur.reps||0:0;
+      const cw=cur?parseFloat(cur.weight)||0:0,cr=cur?cur.reps||0:0;
       if(best.w>cw||(best.w===cw&&best.r>cr)){
         prMap[ex]={exercise:ex,weight:best.w+"kg",reps:best.r,date:fmtShort(today),dateISO:today};
         hitPRs.push(ex);
@@ -494,11 +509,12 @@ function WorkoutScreen({activeW,wSets,onToggle,onUpdate,onAdd,onFinish,onDiscard
     Object.keys(wSets).map(exName=>{
       const exData=PLAN[activeW].exercises.find(e=>e.name===exName);
       const sets=wSets[exName];const mc=MCOLORS[exData?.muscle]||ACCENT;
-      const lp=lastLoggedTop(history,exName);const prevStr=lp?`${lp.w}kg × ${lp.r}`:(exData?.prev||"—");
+      const lp=lastLoggedTop(history,exName);const prevStr=lp?(lp.w>0?`${lp.w}kg × ${lp.r}`:`BW × ${lp.r}`):(exData?.prev||"—");
       return h("div",{key:exName,style:{background:CARD,border:`1px solid ${BORDER}`,borderRadius:10,padding:"12px",marginBottom:10}},
         h("div",{style:{marginBottom:10}},
           h("div",{style:{fontFamily:FONT,fontSize:15,fontWeight:800,color:TEXT}},exName.toUpperCase()),
-          h("span",{style:{fontSize:11,background:`${mc}22`,color:mc,padding:"2px 8px",borderRadius:4,display:"inline-block",marginTop:4}},exData?.muscle)
+          h("span",{style:{fontSize:11,background:`${mc}22`,color:mc,padding:"2px 8px",borderRadius:4,display:"inline-block",marginTop:4}},exData?.muscle),
+          exData?.target&&h("div",{style:{fontSize:10,color:MUTED,marginTop:5,fontStyle:"italic"}},exData.target)
         ),
         h("div",{style:{display:"grid",gridTemplateColumns:"22px 1fr 62px 52px 28px",gap:5,marginBottom:5}},
           ["SET","PREV","KG","REPS",""].map(l=>h("div",{key:l,style:{fontSize:9,color:MUTED,letterSpacing:1,fontFamily:FONT}},l))
@@ -506,7 +522,7 @@ function WorkoutScreen({activeW,wSets,onToggle,onUpdate,onAdd,onFinish,onDiscard
         sets.map((set,idx)=>h("div",{key:idx,style:{display:"grid",gridTemplateColumns:"22px 1fr 62px 52px 28px",gap:5,marginBottom:5,padding:"3px 0",borderRadius:6,background:set.done?"rgba(34,197,94,0.07)":"transparent"}},
           h("div",{style:{fontFamily:FONT,fontSize:14,fontWeight:700,color:set.done?GREEN:MUTED,alignSelf:"center"}},idx+1),
           h("div",{style:{fontSize:11,color:MUTED,alignSelf:"center"}},idx===0?prevStr:"—"),
-          h("input",{type:"number",placeholder:"0",value:set.weight,onChange:e=>onUpdate(exName,idx,"weight",e.target.value),style:{borderColor:set.done?"rgba(34,197,94,0.4)":"#1E2530"}}),
+          h("input",{type:"number",placeholder:exData?.repFocus?"BW":"0",value:set.weight,onChange:e=>onUpdate(exName,idx,"weight",e.target.value),style:{borderColor:set.done?"rgba(34,197,94,0.4)":"#1E2530"}}),
           h("input",{type:"number",placeholder:"0",value:set.reps,onChange:e=>onUpdate(exName,idx,"reps",e.target.value),style:{borderColor:set.done?"rgba(34,197,94,0.4)":"#1E2530"}}),
           h("button",{className:`check-btn${set.done?" done":""}`,onClick:()=>onToggle(exName,idx)},set.done&&h("span",{style:{color:"#fff",fontSize:11,fontWeight:700}},"✓"))
         )),
@@ -653,7 +669,7 @@ function ExerciseHistory({history}){
       log.map((e,i)=>h("div",{key:i,style:{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"8px 0",borderBottom:i<log.length-1?`1px solid ${BORDER}`:"none"}},
         h("div",{style:{fontSize:12,color:MUTED}},fmtDate(e.date)),
         h("div",{style:{display:"flex",gap:12,alignItems:"baseline"}},
-          h("div",{style:{fontFamily:FONT,fontSize:16,fontWeight:700,color:TEXT}},e.top.w+"kg × "+e.top.r),
+          h("div",{style:{fontFamily:FONT,fontSize:16,fontWeight:700,color:TEXT}},(e.top.w>0?e.top.w+"kg × "+e.top.r:"BW × "+e.top.r)),
           h("div",{style:{fontSize:11,color:MUTED}},e.vol+"kg vol")
         )
       ))
