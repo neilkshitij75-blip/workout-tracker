@@ -53,9 +53,16 @@ const QUOTES=[
   {text:"Small daily improvements lead to stunning results.",attr:"Unknown"},
 ];
 
+// Program runs 40 weeks from 2026-04-26 (matches Trainmore's program).
+const PROGRAM_START=new Date(2026,3,26);
+const PROGRAM_WEEKS=40;
 function getWeekNum(){
-  const start=new Date("2025-04-26");
-  return Math.max(0,Math.floor((new Date()-start)/(7*24*60*60*1000)));
+  return Math.max(0,Math.floor((new Date()-PROGRAM_START)/(7*24*60*60*1000)));
+}
+function programRange(){
+  const end=new Date(PROGRAM_START);end.setDate(end.getDate()+PROGRAM_WEEKS*7);
+  const o={month:"short",day:"numeric",year:"numeric"};
+  return PROGRAM_START.toLocaleDateString("en-US",o)+" – "+end.toLocaleDateString("en-US",o);
 }
 
 // BATCH STRUCTURE:
@@ -539,7 +546,7 @@ function PlanPage(){
     // Quote
     h("div",{style:{background:CARD,border:`1px solid ${BORDER}`,borderLeft:`3px solid ${GREEN}`,borderRadius:10,padding:"12px 14px",marginBottom:12,position:"relative",overflow:"hidden"}},
       h("div",{style:{position:"absolute",top:-8,right:8,fontFamily:FONT,fontSize:70,color:`${GREEN}08`,lineHeight:1,pointerEvents:"none"}},"\u201C"),
-      h("div",{style:{fontFamily:FONT,fontSize:9,letterSpacing:2.5,color:GREEN,marginBottom:6}},"WEEK "+Math.min(wk+1,26)+" · NUTRITION"),
+      h("div",{style:{fontFamily:FONT,fontSize:9,letterSpacing:2.5,color:GREEN,marginBottom:6}},"WEEK "+Math.min(wk+1,PROGRAM_WEEKS)+" · NUTRITION"),
       h("div",{style:{fontSize:13,color:MUTED2,lineHeight:1.5,fontStyle:"italic"}},"\u201C"+quote.text+"\u201D"),
       h("div",{style:{fontSize:11,color:MUTED,marginTop:6}},"\u2014 "+quote.attr)
     ),
@@ -811,8 +818,8 @@ function App(){
           h("div",{style:{fontSize:10,color:MUTED,letterSpacing:1.5,marginTop:2}},"WEEKLY PLAN · 2,800 KCAL")
         ),
         h("div",{style:{textAlign:"right"}},
-          h("div",{style:{fontSize:11,color:MUTED}},"Week "+Math.min(getWeekNum()+1,26)+" / 26"),
-          h("div",{style:{fontSize:10,color:MUTED,marginTop:1}},"Apr 26 – Oct 26, 2025")
+          h("div",{style:{fontSize:11,color:MUTED}},"Week "+Math.min(getWeekNum()+1,PROGRAM_WEEKS)+" / "+PROGRAM_WEEKS),
+          h("div",{style:{fontSize:10,color:MUTED,marginTop:1}},programRange())
         )
       )
     ),

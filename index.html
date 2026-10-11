@@ -72,10 +72,10 @@ const QUOTES=[
 ];
 
 const PLAN={
-  "Day 1: Push":{color:"#FF6B35",exercises:[{name:"Incline Dumbbell Press",muscle:"Upper Chest",prev:"18kg × 10"},{name:"Flat Bench Press",muscle:"Chest",prev:"22.5kg × 8"},{name:"Arnold Press",muscle:"Shoulders",prev:"14kg × 10"},{name:"Cable Lateral Raise",muscle:"Side Delts",prev:"5kg × 12"},{name:"Tricep Pushdown",muscle:"Triceps",prev:"15kg × 12"},{name:"Overhead Tricep Ext",muscle:"Triceps",prev:"20kg × 10"}]},
-  "Day 2: Pull":{color:"#8B5CF6",exercises:[{name:"Neutral Grip Pulldown",muscle:"Lats",prev:"35kg × 10"},{name:"Seated Cable Row",muscle:"Mid Back",prev:"35kg × 10"},{name:"Bent-Over Row",muscle:"Back",prev:"14kg × 10"},{name:"Incline DB Curl",muscle:"Biceps",prev:"10kg × 12"},{name:"Hammer Curl",muscle:"Biceps",prev:"10kg × 12"},{name:"Face Pull",muscle:"Rear Delts",prev:"15kg × 15"}]},
+  "Day 1: Push":{color:"#FF6B35",exercises:[{name:"Incline Dumbbell Press",muscle:"Upper Chest",prev:"18kg × 10"},{name:"Flat Bench Press",muscle:"Chest",prev:"20kg × 10",target:"20kg × 10 all sets → 22.5kg once 3×10 is clean"},{name:"Arnold Press",muscle:"Shoulders",prev:"14kg × 10"},{name:"Cable Lateral Raise",muscle:"Side Delts",prev:"5kg × 12"},{name:"Tricep Pushdown",muscle:"Triceps",prev:"15kg × 12"},{name:"Overhead Tricep Ext",muscle:"Triceps",prev:"20kg × 10"}]},
+  "Day 2: Pull":{color:"#8B5CF6",exercises:[{name:"Neutral Grip Pulldown",muscle:"Lats",prev:"35kg × 10"},{name:"Seated Cable Row",muscle:"Mid Back",prev:"40kg × 10",target:"40kg × 10 all sets → 42.5kg once 3×10 is clean"},{name:"Bent-Over Row",muscle:"Back",prev:"14kg × 10"},{name:"Incline DB Curl",muscle:"Biceps",prev:"10kg × 12"},{name:"Reverse Pec Deck",muscle:"Rear Delts",prev:"15kg × 12",target:"3 sets · 12–15 reps"},{name:"Face Pull",muscle:"Rear Delts",prev:"15kg × 15"}]},
   "Day 3: Legs":{color:"#10B981",exercises:[{name:"Leg Press",muscle:"Quads",prev:"60kg × 12"},{name:"Leg Extension",muscle:"Quads",prev:"30kg × 12"},{name:"Hamstring Curl",muscle:"Hamstrings",prev:"30kg × 10"},{name:"Calf Raises",muscle:"Calves",prev:"45kg × 15"},{name:"Dumbbell Squat",muscle:"Quads",prev:"20kg × 12"}]},
-  "Day 4: Upper":{color:"#F59E0B",exercises:[{name:"Weighted Dips",muscle:"Chest/Triceps",prev:"BW × 8",repFocus:true,target:"Bodyweight · aim 12–15 clean reps"},{name:"Shoulder Press",muscle:"Shoulders",prev:"35kg × 10"},{name:"Front Raise",muscle:"Front Delts",prev:"6kg × 12"},{name:"Bicep Curl",muscle:"Biceps",prev:"5kg × 15"},{name:"Tricep Kickback",muscle:"Triceps",prev:"16kg × 12"},{name:"Bent-Over Row",muscle:"Back",prev:"14kg × 10"}]},
+  "Day 4: Upper":{color:"#F59E0B",exercises:[{name:"Weighted Dips",muscle:"Chest/Triceps",prev:"BW × 8",repFocus:true,target:"Bodyweight · aim 12–15 clean reps"},{name:"Shoulder Press",muscle:"Shoulders",prev:"20kg × 5",target:"Set 1: 20kg × 5 · Sets 2–3: 18kg × 10"},{name:"Dumbbell Lateral Raise",muscle:"Side Delts",prev:"6kg × 12",target:"3 sets · 12–15 reps"},{name:"Bicep Curl",muscle:"Biceps",prev:"5kg × 15"},{name:"Pec Deck",muscle:"Chest",prev:"20kg × 10",target:"3 sets · 10–12 reps"},{name:"Bent-Over Row",muscle:"Back",prev:"14kg × 10"}]},
 };
 const MCOLORS={"Upper Chest":"#FF8C5A","Chest":"#FF6B35","Chest/Triceps":"#F87171","Quads":"#10B981","Hamstrings":"#059669","Calves":"#34D399","Back":"#8B5CF6","Lats":"#A78BFA","Mid Back":"#C4B5FD","Rear Delts":"#DDD6FE","Shoulders":"#00BFFF","Side Delts":"#38BDF8","Front Delts":"#7DD3FC","Biceps":"#F59E0B","Triceps":"#EF4444","Glutes":"#10B981"};
 
@@ -87,11 +87,13 @@ const SEED_HISTORY=[
 ];
 const SEED_PRS=[{exercise:"Weighted Dips",weight:"BW",reps:8,date:"Apr 14"},{exercise:"Seated Cable Row",weight:"35kg",reps:10,date:"Apr 16"},{exercise:"Leg Press",weight:"60kg",reps:12,date:"Apr 18"}];
 const SEED_WEIGHT=69;
-const DEFAULT_PROGRAM={startDate:"2025-04-26",weeks:26,startWeight:69,goalWeight:75};
+const DEFAULT_PROGRAM={startDate:"2026-04-26",weeks:40,startWeight:69,goalWeight:72,v:2};
+// Muscles for exercises retired from the plan, so old logged sessions still bucket correctly in volume.
+const RETIRED_MUSCLE={"Front Raise":"Front Delts","Tricep Kickback":"Triceps","Hammer Curl":"Biceps","Dumbbell Lunge":"Glutes"};
 const MGROUP={"Upper Chest":"Chest","Chest":"Chest","Chest/Triceps":"Chest","Shoulders":"Shoulders","Side Delts":"Shoulders","Front Delts":"Shoulders","Rear Delts":"Shoulders","Back":"Back","Lats":"Back","Mid Back":"Back","Quads":"Legs","Hamstrings":"Legs","Glutes":"Legs","Calves":"Legs","Biceps":"Biceps","Triceps":"Triceps"};
 const GROUPCOLOR={Chest:"#FF6B35",Back:"#8B5CF6",Shoulders:"#00BFFF",Legs:"#10B981",Biceps:"#F59E0B",Triceps:"#EF4444",Other:"#6B7A94"};
 
-function getWeekNum(startISO){const p=String(startISO||"2025-04-26").split("-").map(Number);const start=new Date(p[0],p[1]-1,p[2]);return Math.max(0,Math.floor((new Date()-start)/(7*24*60*60*1000)));}
+function getWeekNum(startISO){const p=String(startISO||DEFAULT_PROGRAM.startDate).split("-").map(Number);const start=new Date(p[0],p[1]-1,p[2]);return Math.max(0,Math.floor((new Date()-start)/(7*24*60*60*1000)));}
 function progEnd(startISO,weeks){const p=String(startISO).split("-").map(Number);const e=new Date(p[0],p[1]-1,p[2]);e.setDate(e.getDate()+(weeks||26)*7);return e;}
 function fmtRange(startISO,weeks){const p=String(startISO).split("-").map(Number);const s=new Date(p[0],p[1]-1,p[2]);const e=progEnd(startISO,weeks);const o={month:"short",day:"numeric"};return s.toLocaleDateString("en-US",o)+" – "+e.toLocaleDateString("en-US",o)+", "+e.getFullYear();}
 function fmtRangeShort(startISO,weeks){const p=String(startISO).split("-").map(Number);const s=new Date(p[0],p[1]-1,p[2]);const e=progEnd(startISO,weeks);const o={month:"short",day:"numeric"};return (s.toLocaleDateString("en-US",o)+" – "+e.toLocaleDateString("en-US",o)).toUpperCase();}
@@ -180,7 +182,7 @@ function weeklyVolume(history){
     const plan=PLAN[hh.name];
     Object.entries(hh.logged).forEach(([ex,sets])=>{
       const exDef=plan?plan.exercises.find(e=>e.name===ex):null;
-      const grp=MGROUP[exDef&&exDef.muscle]||"Other";
+      const grp=MGROUP[exDef?exDef.muscle:RETIRED_MUSCLE[ex]]||"Other";
       sets.forEach(s=>{vol[grp]=(vol[grp]||0)+(parseFloat(s.weight)||0)*(parseInt(s.reps)||0);});
     });
   });
@@ -205,7 +207,15 @@ function App(){
   const [history,setHistoryRaw]=useState(saved?.history||SEED_HISTORY);
   const [prs,setPrsRaw]=useState(saved?.prs||SEED_PRS);
   const [bodyWeight,setBodyWeightRaw]=useState(saved?.bodyWeight||SEED_WEIGHT);
-  const [program,setProgramRaw]=useState({...DEFAULT_PROGRAM,...(saved?.program||{})});
+  const [program,setProgramRaw]=useState(()=>{
+    const stored=saved?.program;
+    const p={...DEFAULT_PROGRAM,...(stored||{})};
+    // v2 migration (Oct 2026): program really started 2026-04-26, goal 72kg over 40 weeks.
+    // Checks the *stored* flag (defaults already carry v:2). Runs once; startWeight, history,
+    // PRs and body weight are left untouched.
+    if(stored&&!(stored.v>=2)){p.startDate="2026-04-26";p.weeks=40;p.goalWeight=72;p.v=2;}
+    return p;
+  });
   const [tab,setTab]=useState("dashboard");
   const [activeW,setActiveW]=useState(null);
   const [wSets,setWSets]=useState({});
@@ -302,7 +312,7 @@ function App(){
       h("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}},
         h("div",null,
           h("div",{style:{fontFamily:FONT,fontSize:20,fontWeight:800,letterSpacing:3,color:ACCENT}},"TRAINMORE"),
-          h("div",{style:{fontSize:10,color:MUTED,letterSpacing:1.5,marginTop:1}},"MUSCLE PROGRAM · 6 MONTHS")
+          h("div",{style:{fontSize:10,color:MUTED,letterSpacing:1.5,marginTop:1}},"MUSCLE PROGRAM · "+program.weeks+" WEEKS")
         ),
         h("div",{style:{textAlign:"right"}},
           h("div",{style:{fontSize:11,color:MUTED}},bodyWeight+"kg → ",h("span",{style:{color:ACCENT,fontWeight:600}},program.goalWeight+"kg")),
@@ -686,7 +696,7 @@ function ProgramSettings({program,setProgram}){
     const startWeight=parseFloat(f.startWeight)||program.startWeight;
     const goalWeight=parseFloat(f.goalWeight)||program.goalWeight;
     const startDate=/^\d{4}-\d{2}-\d{2}$/.test(f.startDate)?f.startDate:program.startDate;
-    setProgram({startDate,weeks,startWeight,goalWeight});
+    setProgram({...program,startDate,weeks,startWeight,goalWeight});
     setEditing(false);
   }
   const lbl={fontSize:10,color:MUTED,fontFamily:FONT,letterSpacing:1,marginBottom:4};
